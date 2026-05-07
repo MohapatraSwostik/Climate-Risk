@@ -3,1566 +3,1190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRCS v3 — Climate Risk Credit Score | Bengaluru</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>CRCS v3 — Climate Risk Credit Score · Bengaluru</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --bg: #070d14;
-  --bg2: #0c1520;
-  --bg3: #111e2d;
-  --bg4: #162538;
-  --panel: rgba(12,21,32,0.85);
-  --teal: #00e5c8;
-  --teal2: #00b5a0;
-  --cyan: #00d4ff;
-  --blue: #1a6bff;
-  --orange: #ff6b35;
-  --red: #ff2d55;
-  --amber: #ffb627;
-  --green: #00e676;
-  --purple: #9b59ff;
-  --text: #e8f4f8;
-  --text2: #7a9bb5;
-  --text3: #3d5a6d;
-  --border: rgba(0,229,200,0.12);
-  --border2: rgba(0,229,200,0.06);
-  --glow-t: 0 0 20px rgba(0,229,200,0.3);
-  --glow-o: 0 0 20px rgba(255,107,53,0.3);
-  --glow-r: 0 0 20px rgba(255,45,85,0.3);
-  --glow-g: 0 0 20px rgba(0,230,118,0.3);
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --font-code: 'Space Mono', monospace;
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--font-display);line-height:1.6;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{background:#f7f4ef;color:#1c1c1a;font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+:root{
+  --ink:#1c1c1a;--ink2:#5c5c54;--ink3:#9c9c8e;
+  --bg:#f7f4ef;--bg2:#eeeae2;--bg3:#e4dfd6;
+  --white:#fff;
+  --rule:rgba(28,28,26,.1);--rule2:rgba(28,28,26,.06);
+  --teal:#0a6655;--teal-l:#e2f2ee;--teal-m:#4aaa96;
+  --blue:#1a4e8a;--blue-l:#e8f0fb;
+  --amber:#8a5c00;--amber-l:#fdf2d8;
+  --orange:#8a3800;--orange-l:#fdf3ec;
+  --red:#922020;--red-l:#fceaea;
+  --green:#2a6830;--green-l:#ebf5ec;
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.04);
+  --r:8px;--r2:12px;--r3:16px;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--teal2);border-radius:2px}
+/* --- TICKER --- */
+.ticker{background:var(--ink);overflow:hidden;padding:9px 0;font-family:'DM Mono',monospace;font-size:11.5px}
+.ticker-inner{display:flex;white-space:nowrap;animation:tickscroll 40s linear infinite}
+.tick-seg{padding:0 56px;color:#b0b0a0}
+.tick-seg b{color:#7dd4c4}
+@keyframes tickscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── TICKER ── */
-.ticker-wrap{background:linear-gradient(90deg,rgba(255,107,53,0.15),rgba(255,45,85,0.1));border-bottom:1px solid rgba(255,107,53,0.3);padding:8px 0;overflow:hidden;position:sticky;top:0;z-index:1000}
-.ticker-inner{display:flex;gap:0;white-space:nowrap;animation:ticker 30s linear infinite}
-.ticker-item{font-family:var(--font-mono);font-size:11px;color:var(--orange);padding:0 40px;letter-spacing:0.05em}
-.ticker-item span{color:var(--amber);font-weight:600}
-.ticker-item.alert{color:var(--red)}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* --- NAV --- */
+nav{background:var(--white);border-bottom:1px solid var(--rule);height:58px;display:flex;align-items:center;position:sticky;top:0;z-index:200}
+.nav-w{max-width:1160px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.logo-sq{width:28px;height:28px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:-.02em}
+.nav-title{font-size:13.5px;font-weight:500;color:var(--ink)}
+.nav-links{display:flex;gap:22px}
+.nav-links a{font-size:13px;color:var(--ink2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-live{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);background:var(--teal-l);padding:5px 11px;border-radius:20px}
+.ndot{width:6px;height:6px;border-radius:50%;background:#2ecc71;animation:ndotblink 2s ease infinite}
+@keyframes ndotblink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── NAV ── */
-nav{position:fixed;top:33px;left:0;right:0;z-index:999;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:60px;background:rgba(7,13,20,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{display:flex;align-items:center;gap:12px}
-.nav-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--teal),var(--cyan));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--bg);letter-spacing:-0.05em}
-.nav-logo-text{font-size:13px;font-weight:700;letter-spacing:0.1em;color:var(--text)}
-.nav-logo-text span{color:var(--teal)}
-.nav-links{display:flex;gap:28px}
-.nav-links a{font-family:var(--font-mono);font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:0.08em;transition:color .2s}
-.nav-links a:hover{color:var(--teal)}
-.nav-badge{font-family:var(--font-mono);font-size:10px;background:rgba(0,229,200,0.1);border:1px solid var(--border);padding:4px 10px;border-radius:3px;color:var(--teal);letter-spacing:0.1em}
+/* --- SECTION SHARED --- */
+.wrap{max-width:1160px;margin:0 auto;padding:0 40px}
+section{padding:80px 0}
+.sec-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.sec-label::before{content:'';display:inline-block;width:20px;height:1px;background:var(--ink3)}
+.sec-h{font-family:'Instrument Serif',serif;font-size:clamp(26px,3.5vw,44px);line-height:1.1;letter-spacing:-.02em;font-weight:400;color:var(--ink);margin-bottom:10px}
+.sec-sub{font-size:15px;color:var(--ink2);max-width:520px;line-height:1.7;margin-bottom:40px}
+hr.divider{border:none;border-top:1px solid var(--rule);margin:0 40px}
 
-/* ── HERO ── */
-#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;padding:120px 60px 80px}
-.hero-canvas{position:absolute;inset:0;z-index:0}
-canvas#heroCanvas{width:100%;height:100%}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,200,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,200,0.03) 1px,transparent 1px);background-size:60px 60px;z-index:1}
-.hero-content{position:relative;z-index:2;max-width:900px}
-.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.hero-eyebrow-line{width:40px;height:1px;background:var(--teal)}
-.hero-eyebrow-text{font-family:var(--font-mono);font-size:11px;color:var(--teal);letter-spacing:0.2em;text-transform:uppercase}
-.hero-badge{background:rgba(0,229,200,0.08);border:1px solid rgba(0,229,200,0.2);padding:4px 12px;border-radius:2px;font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.15em}
-.hero-h1{font-size:clamp(42px,6vw,80px);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:24px}
-.hero-h1 .line1{display:block;color:var(--text)}
-.hero-h1 .line2{display:block;background:linear-gradient(90deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:17px;color:var(--text2);max-width:580px;margin-bottom:48px;line-height:1.7;font-weight:400}
-.hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:64px}
-.btn-primary{background:linear-gradient(135deg,var(--teal),var(--cyan));color:var(--bg);padding:14px 28px;border:none;border-radius:4px;font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:0.05em;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-block}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,229,200,0.4)}
-.btn-secondary{background:transparent;color:var(--teal);padding:14px 28px;border:1px solid var(--border);border-radius:4px;font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:0.05em;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-block}
-.btn-secondary:hover{background:rgba(0,229,200,0.05);transform:translateY(-2px)}
-.hero-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:800px}
-.hero-metric{background:var(--panel);border:1px solid var(--border);padding:20px;border-radius:8px;backdrop-filter:blur(20px);transition:all .3s}
-.hero-metric:hover{border-color:var(--teal);box-shadow:var(--glow-t)}
-.hm-val{font-family:var(--font-mono);font-size:24px;font-weight:600;color:var(--teal);line-height:1}
-.hm-label{font-size:11px;color:var(--text2);margin-top:8px;letter-spacing:0.05em}
+/* --- HERO --- */
+#hero{padding:96px 0 72px;background:var(--white);border-bottom:1px solid var(--rule)}
+.hero-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);display:flex;align-items:center;gap:8px;margin-bottom:20px;letter-spacing:.04em}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--teal)}
+.hero-h1{font-family:'Instrument Serif',serif;font-size:clamp(38px,6vw,72px);line-height:1.06;letter-spacing:-.025em;font-weight:400;color:var(--ink);margin-bottom:22px}
+.hero-h1 em{color:var(--teal);font-style:italic}
+.hero-sub{font-size:17px;color:var(--ink2);max-width:560px;line-height:1.72;font-weight:300;margin-bottom:36px}
+.hero-btns{display:flex;gap:10px;margin-bottom:60px;flex-wrap:wrap}
+.btn{padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;border:1px solid transparent}
+.btn-dark{background:var(--ink);color:#fff;border-color:var(--ink)}.btn-dark:hover{background:#333}
+.btn-ghost{background:transparent;color:var(--ink);border-color:rgba(28,28,26,.18)}.btn-ghost:hover{background:var(--bg2)}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r2);overflow:hidden}
+.kpi{background:var(--white);padding:22px 20px}
+.kpi-n{font-family:'Instrument Serif',serif;font-size:34px;color:var(--ink);line-height:1}
+.kpi-l{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-top:5px}
 
-/* ── SECTION COMMON ── */
-section{padding:100px 60px;position:relative}
-.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--teal);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.section-eyebrow::before{content:'';width:24px;height:1px;background:var(--teal)}
-.section-title{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-0.02em;margin-bottom:16px}
-.section-sub{font-size:16px;color:var(--text2);max-width:560px;line-height:1.7}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:0.2;margin:0 60px}
+/* --- MAP --- */
+#map-sec{background:var(--bg);padding:0}
+.map-header{max-width:1160px;margin:0 auto;padding:52px 40px 28px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.layer-pills{display:flex;gap:6px;flex-wrap:wrap}
+.lp{padding:7px 14px;border-radius:20px;border:1px solid var(--rule);background:var(--white);font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink2);cursor:pointer;transition:all .15s}
+.lp:hover{border-color:rgba(28,28,26,.25)}.lp.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.map-body{display:grid;grid-template-columns:1fr 360px;border-top:1px solid var(--rule)}
+.map-canvas-wrap{position:relative;height:560px;background:var(--bg2);overflow:hidden}
+#mapCanvas{display:block;width:100%;height:100%}
+.map-legend{position:absolute;bottom:20px;left:20px;background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:14px 16px}
+.ml-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.06em;margin-bottom:9px}
+.ml-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;font-size:12px;color:var(--ink2)}
+.ml-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.map-sidebar{background:var(--white);border-left:1px solid var(--rule);height:560px;overflow-y:auto}
+.sb-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;color:var(--ink3)}
+.sb-empty svg{opacity:.25;margin-bottom:14px}
+.sb-empty p{font-family:'DM Mono',monospace;font-size:12px;line-height:1.6}
+.sb-content{padding:24px;display:none}
+.sb-content.show{display:block}
+.sb-ward{font-family:'Instrument Serif',serif;font-size:22px;color:var(--ink)}
+.sb-zone{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-top:3px;margin-bottom:18px}
+.sb-score-row{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sb-big{font-family:'Instrument Serif',serif;font-size:52px;color:var(--ink);line-height:1}
+.sb-grade{padding:7px 16px;border-radius:var(--r);font-family:'Instrument Serif',serif;font-size:30px;line-height:1}
+.sb-ci{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-top:5px}
+.sb-bars{margin-bottom:20px}
+.sb-bar{margin-bottom:11px}
+.sb-brow{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.sb-blabel{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2)}
+.sb-bval{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--ink)}
+.sb-track{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.sb-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.sb-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.sb-chip{background:var(--bg2);border-radius:var(--r);padding:11px}
+.sc-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-bottom:3px}
+.sc-val{font-size:14px;font-weight:500;color:var(--ink)}
+.sb-trust{background:var(--teal-l);border-radius:var(--r);padding:13px;font-size:12px}
+.sb-trust .t-head{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:.06em;margin-bottom:8px}
+.sb-trust p{color:var(--teal);margin-bottom:5px}
+.sb-trust p::before{content:'✓  '}
 
-/* ── MAP SECTION ── */
-#map-section{padding:0;background:var(--bg2)}
-.map-header{padding:60px 60px 40px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
-.map-filters{display:flex;gap:10px;flex-wrap:wrap}
-.map-filter{background:var(--bg3);border:1px solid var(--border2);padding:8px 16px;border-radius:4px;font-family:var(--font-mono);font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;letter-spacing:0.05em}
-.map-filter.active,.map-filter:hover{background:rgba(0,229,200,0.1);border-color:var(--teal);color:var(--teal)}
-.map-container{display:grid;grid-template-columns:1fr 380px;height:580px}
-.map-viz{position:relative;background:var(--bg);overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-canvas#mapCanvas{width:100%;height:100%;display:block}
-.map-legend{position:absolute;bottom:20px;left:20px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;backdrop-filter:blur(20px)}
-.legend-title{font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:0.1em;margin-bottom:12px}
-.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11px;color:var(--text2)}
-.legend-dot{width:10px;height:10px;border-radius:2px}
-.map-sidebar{background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.sidebar-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;opacity:0.5}
-.sidebar-empty-icon{font-size:32px;margin-bottom:16px;opacity:0.5}
-.sidebar-empty p{font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:0.05em}
-.ward-panel{padding:28px;display:none}
-.ward-panel.active{display:block}
-.wp-header{margin-bottom:24px}
-.wp-name{font-size:22px;font-weight:800;letter-spacing:-0.02em}
-.wp-zone{font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-top:4px;letter-spacing:0.05em}
-.wp-score-row{display:flex;align-items:center;gap:16px;margin-bottom:28px}
-.wp-score-circle{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid var(--teal);position:relative}
-.wp-score-num{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--teal);line-height:1}
-.wp-score-label{font-size:9px;color:var(--text2);letter-spacing:0.1em}
-.wp-grade-badge{padding:6px 16px;border-radius:3px;font-family:var(--font-mono);font-size:20px;font-weight:700}
-.wp-ci{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
-.wp-ci span{color:var(--teal)}
-.sub-bars{margin-bottom:24px}
-.sub-bar-row{margin-bottom:14px}
-.sb-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
-.sb-label-name{color:var(--text2);font-family:var(--font-mono);font-size:11px;letter-spacing:0.03em}
-.sb-label-val{color:var(--text);font-family:var(--font-mono);font-size:11px;font-weight:600}
-.sb-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.sb-fill{height:100%;border-radius:3px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1)}
-.wp-fin{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
-.fin-card{background:var(--bg3);border:1px solid var(--border2);padding:12px;border-radius:6px}
-.fin-card-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:4px}
-.fin-card-val{font-family:var(--font-mono);font-size:15px;font-weight:600;color:var(--orange)}
-.trust-box{background:rgba(0,229,200,0.04);border:1px solid rgba(0,229,200,0.15);border-radius:6px;padding:14px}
-.trust-title{font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.1em;margin-bottom:10px}
-.trust-item{font-size:11px;color:var(--text2);margin-bottom:6px;display:flex;gap:8px}
-.trust-item::before{content:'✓';color:var(--teal);flex-shrink:0}
+/* --- DASHBOARD --- */
+#dashboard{background:var(--white)}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.dc{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r2);padding:22px}
+.dc.wide{grid-column:span 2}
+.dc-label{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--ink3);margin-bottom:14px;letter-spacing:.04em}
+.dc-area{height:130px;position:relative}
 
-/* ── ANALYTICS DASHBOARD ── */
-#dashboard{background:var(--bg)}
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
-.dash-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all .3s;position:relative;overflow:hidden}
-.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--cyan))}
-.dash-card:hover{border-color:var(--teal);box-shadow:var(--glow-t);transform:translateY(-2px)}
-.dash-card.wide{grid-column:span 2}
-.dash-card.danger::before{background:linear-gradient(90deg,var(--orange),var(--red))}
-.dash-card.danger:hover{box-shadow:var(--glow-o)}
-.dash-card.amber::before{background:linear-gradient(90deg,var(--amber),var(--orange))}
-.card-label{font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:0.12em;margin-bottom:16px}
-.card-chart-area{height:120px;position:relative}
-.chart-svg{width:100%;height:100%}
+/* --- METHODOLOGY --- */
+#method{background:var(--bg)}
+.method-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px;margin-bottom:28px}
+.pillar{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:26px;position:relative;overflow:hidden}
+.pillar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.p-blue::before{background:var(--blue)}.p-amber::before{background:var(--amber)}.p-teal::before{background:var(--teal)}
+.p-pct{font-family:'Instrument Serif',serif;font-size:52px;color:var(--ink);line-height:1;margin-bottom:4px}
+.p-name{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:14px}
+.p-list{list-style:none}
+.p-list li{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink2);padding:6px 0;border-bottom:1px solid var(--rule2);display:flex;gap:6px;align-items:flex-start}
+.p-list li::before{content:'→';color:var(--ink3);flex-shrink:0;font-size:10px;margin-top:1px}
+.formula-block{background:var(--ink);border-radius:var(--r2);padding:32px 36px;text-align:center}
+.fb-lbl{font-family:'DM Mono',monospace;font-size:11px;color:#777770;letter-spacing:.1em;margin-bottom:10px}
+.fb-f{font-family:'Instrument Serif',serif;font-size:clamp(15px,2.5vw,26px);color:#f0ede6}
+.fb-f .hl{color:#4aaa96}
+.fb-note{font-family:'DM Mono',monospace;font-size:11px;color:#666660;margin-top:10px}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;margin-top:26px}
+.fs{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);padding:11px 15px;text-align:center;min-width:96px}
+.fs-n{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--ink3);margin-bottom:3px}
+.fs-l{font-size:12px;font-weight:500;color:var(--ink)}
+.fa{color:var(--ink3);padding:0 5px;font-size:14px}
 
-/* ── METHODOLOGY ── */
-#methodology{background:var(--bg2)}
-.method-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.pillar-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:32px;position:relative;overflow:hidden;transition:all .3s}
-.pillar-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
-.pillar-card.flood::after{background:linear-gradient(90deg,#1a6bff,#00d4ff)}
-.pillar-card.heat::after{background:linear-gradient(90deg,var(--orange),var(--amber))}
-.pillar-card.water::after{background:linear-gradient(90deg,var(--teal),var(--green))}
-.pillar-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
-.pillar-icon{font-size:32px;margin-bottom:16px}
-.pillar-name{font-size:20px;font-weight:700;margin-bottom:8px}
-.pillar-weight{font-family:var(--font-mono);font-size:36px;font-weight:700;color:var(--teal);line-height:1;margin-bottom:16px}
-.pillar-vars{list-style:none}
-.pillar-vars li{font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border2);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
-.pillar-vars li::before{content:'→';color:var(--teal);font-size:11px}
-.formula-box{background:var(--bg3);border:1px solid var(--teal);border-radius:10px;padding:40px;text-align:center;margin-top:48px;position:relative;overflow:hidden}
-.formula-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,229,200,0.04) 0%,transparent 70%)}
-.formula-label{font-family:var(--font-mono);font-size:11px;color:var(--teal);letter-spacing:0.2em;margin-bottom:16px}
-.formula-text{font-family:var(--font-code);font-size:clamp(16px,2.5vw,26px);font-weight:700;letter-spacing:0.05em;position:relative}
-.f-teal{color:var(--teal)}
-.f-cyan{color:var(--cyan)}
-.f-orange{color:var(--orange)}
-.flow-diagram{display:flex;align-items:center;justify-content:center;gap:0;margin-top:48px;flex-wrap:wrap;gap:0}
-.flow-step{background:var(--bg3);border:1px solid var(--border);padding:16px 20px;border-radius:6px;text-align:center;min-width:120px;transition:all .3s;position:relative}
-.flow-step:hover{border-color:var(--teal);box-shadow:var(--glow-t)}
-.flow-step-num{font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.1em;margin-bottom:6px}
-.flow-step-label{font-size:12px;font-weight:600;color:var(--text)}
-.flow-arrow{color:var(--teal);font-size:20px;padding:0 8px;opacity:0.5}
+/* --- PIPELINE --- */
+#pipeline{background:var(--white)}
+.pipe-grid{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--rule);border-radius:var(--r2);overflow:hidden;margin-top:36px}
+.pcol{padding:18px 16px;border-right:1px solid var(--rule)}
+.pcol:last-child{border-right:none}
+.pcol-h{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.07em;padding-bottom:11px;border-bottom:1px solid var(--rule);margin-bottom:11px}
+.pi{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--rule2);display:flex;align-items:center;gap:5px}
+.pi::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--teal-m);flex-shrink:0}
+.tech-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.tech-tag{border:1px solid var(--rule);border-radius:20px;padding:5px 13px;font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink2);background:var(--white);transition:all .15s;cursor:default}
+.tech-tag:hover{background:var(--bg2)}
 
-/* ── PIPELINE ── */
-#pipeline{background:var(--bg)}
-.pipe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:48px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.pipe-stage{padding:24px 20px;border-right:1px solid var(--border);background:var(--bg2);transition:all .3s}
-.pipe-stage:last-child{border-right:none}
-.pipe-stage:hover{background:var(--bg3)}
-.pipe-stage-label{font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.15em;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-.pipe-items{list-style:none}
-.pipe-item{font-size:12px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:8px;transition:color .2s}
-.pipe-item:hover{color:var(--text)}
-.pipe-item::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
-.tech-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:48px}
-.tech-badge{background:var(--bg2);border:1px solid var(--border);padding:8px 16px;border-radius:4px;font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:0.05em;transition:all .2s}
-.tech-badge:hover{border-color:var(--teal);color:var(--teal)}
+/* --- FINANCIAL MATRIX --- */
+#financial{background:var(--bg)}
+.fin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.fb2{border-radius:var(--r2);padding:26px;border:1px solid transparent}
+.fg-a{background:var(--green-l);border-color:rgba(42,104,48,.14)}
+.fg-b{background:var(--teal-l);border-color:rgba(10,102,85,.14)}
+.fg-c{background:var(--amber-l);border-color:rgba(138,92,0,.14)}
+.fg-d{background:var(--red-l);border-color:rgba(146,32,32,.14)}
+.fb2-grade{font-family:'Instrument Serif',serif;font-size:56px;line-height:1;margin-bottom:2px}
+.fg-a .fb2-grade{color:var(--green)}.fg-b .fb2-grade{color:var(--teal)}.fg-c .fb2-grade{color:var(--amber)}.fg-d .fb2-grade{color:var(--red)}
+.fb2-range{font-family:'DM Mono',monospace;font-size:11.5px;margin-bottom:14px;opacity:.55}
+.fb2-level{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:14px}
+.fb2-row{margin-bottom:9px}
+.fb2-k{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-bottom:2px;letter-spacing:.04em}
+.fb2-v{font-size:14px;font-weight:500}
+.fg-a .fb2-v{color:var(--green)}.fg-b .fb2-v{color:var(--teal)}.fg-c .fb2-v{color:var(--amber)}.fg-d .fb2-v{color:var(--red)}
 
-/* ── FINANCIAL MATRIX ── */
-#financial{background:var(--bg2)}
-.fin-matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
-.fin-band{border-radius:10px;padding:32px 24px;position:relative;overflow:hidden;transition:all .3s;border:1px solid transparent}
-.fin-band:hover{transform:translateY(-4px)}
-.fin-band.grade-a{background:rgba(0,230,118,0.05);border-color:rgba(0,230,118,0.2)}
-.fin-band.grade-a:hover{box-shadow:var(--glow-g)}
-.fin-band.grade-b{background:rgba(0,229,200,0.05);border-color:rgba(0,229,200,0.2)}
-.fin-band.grade-b:hover{box-shadow:var(--glow-t)}
-.fin-band.grade-c{background:rgba(255,182,39,0.05);border-color:rgba(255,182,39,0.2)}
-.fin-band.grade-c:hover{box-shadow:0 0 20px rgba(255,182,39,0.3)}
-.fin-band.grade-d{background:rgba(255,107,53,0.05);border-color:rgba(255,107,53,0.2)}
-.fin-band.grade-d:hover{box-shadow:var(--glow-o)}
-.fin-band-grade{font-family:var(--font-mono);font-size:48px;font-weight:700;line-height:1;margin-bottom:8px}
-.grade-a .fin-band-grade{color:var(--green)}
-.grade-b .fin-band-grade{color:var(--teal)}
-.grade-c .fin-band-grade{color:var(--amber)}
-.grade-d .fin-band-grade{color:var(--orange)}
-.fin-band-range{font-family:var(--font-mono);font-size:13px;margin-bottom:20px;opacity:0.6}
-.fin-band-label{font-size:16px;font-weight:700;margin-bottom:20px}
-.fin-detail{margin-bottom:10px}
-.fin-detail-key{font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:0.08em}
-.fin-detail-val{font-size:14px;font-weight:600;margin-top:2px}
-.grade-a .fin-detail-val{color:var(--green)}
-.grade-b .fin-detail-val{color:var(--teal)}
-.grade-c .fin-detail-val{color:var(--amber)}
-.grade-d .fin-detail-val{color:var(--orange)}
+/* --- RANKINGS --- */
+#rankings{background:var(--white)}
+.rank-bar{display:flex;gap:10px;margin:26px 0;flex-wrap:wrap;align-items:center}
+.rank-search{border:1px solid var(--rule);background:var(--bg2);border-radius:var(--r);padding:9px 13px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);width:190px;outline:none}
+.rank-search:focus{border-color:rgba(28,28,26,.25);background:var(--white)}
+.rank-search::placeholder{color:var(--ink3)}
+.rank-sort{border:1px solid var(--rule);background:var(--white);border-radius:var(--r);padding:9px 13px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);outline:none;cursor:pointer}
+.tbl-scroll{border:1px solid var(--rule);border-radius:var(--r2);overflow:hidden;overflow-x:auto}
+table.rt{width:100%;border-collapse:collapse;font-size:12px}
+table.rt th{background:var(--bg2);padding:11px 14px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink2);border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap;letter-spacing:.05em}
+table.rt th:hover{color:var(--ink)}
+table.rt td{padding:12px 14px;border-bottom:1px solid var(--rule2);font-family:'DM Mono',monospace;color:var(--ink2);background:var(--white);white-space:nowrap}
+table.rt tr:last-child td{border-bottom:none}
+table.rt tr:hover td{background:var(--bg2)}
+.gp{display:inline-block;padding:2px 8px;border-radius:4px;font-weight:500;font-size:11px}
+.gA{background:var(--green-l);color:var(--green)}.gB{background:var(--teal-l);color:var(--teal)}
+.gC{background:var(--amber-l);color:var(--amber)}.gD{background:var(--orange-l);color:var(--orange)}.gE{background:var(--red-l);color:var(--red)}
 
-/* ── WARD RANKINGS ── */
-#rankings{background:var(--bg)}
-.rank-controls{display:flex;gap:12px;margin:32px 0;flex-wrap:wrap;align-items:center}
-.rank-search{background:var(--bg2);border:1px solid var(--border);padding:10px 16px;border-radius:4px;font-family:var(--font-mono);font-size:12px;color:var(--text);width:220px;letter-spacing:0.03em;outline:none}
-.rank-search:focus{border-color:var(--teal)}
-.rank-search::placeholder{color:var(--text3)}
-.rank-sort{background:var(--bg2);border:1px solid var(--border);padding:10px 16px;border-radius:4px;font-family:var(--font-mono);font-size:12px;color:var(--text);cursor:pointer;outline:none;appearance:none}
-.rank-table-wrap{overflow-x:auto}
-.rank-table{width:100%;border-collapse:collapse;font-size:12px}
-.rank-table th{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 16px;text-align:left;font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:0.1em;cursor:pointer;white-space:nowrap;transition:color .2s}
-.rank-table th:hover{color:var(--teal)}
-.rank-table td{padding:14px 16px;border-bottom:1px solid var(--border2);color:var(--text2);font-family:var(--font-mono);white-space:nowrap;transition:all .2s}
-.rank-table tr:hover td{background:rgba(0,229,200,0.03);color:var(--text)}
-.grade-pill{display:inline-block;padding:3px 10px;border-radius:3px;font-weight:700;font-size:12px}
-.gp-A{background:rgba(0,230,118,0.15);color:var(--green)}
-.gp-B{background:rgba(0,229,200,0.15);color:var(--teal)}
-.gp-C{background:rgba(255,182,39,0.15);color:var(--amber)}
-.gp-D{background:rgba(255,107,53,0.15);color:var(--orange)}
-.gp-E{background:rgba(255,45,85,0.15);color:var(--red)}
-.risk-bar-mini{width:60px;height:4px;border-radius:2px;display:inline-block}
+/* --- SCENARIOS --- */
+#scenarios{background:var(--bg)}
+.sc-top{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px;align-items:start}
+.prop-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:22px}
+.prop-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.07em;margin-bottom:9px}
+.prop-name{font-size:18px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.prop-sub{font-size:13px;color:var(--ink2);margin-bottom:16px}
+.prop-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ps-v{font-family:'Instrument Serif',serif;font-size:20px;color:var(--ink)}
+.ps-l{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-top:2px}
+.base-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:22px;display:flex;flex-direction:column;gap:14px}
+.base-n{font-family:'Instrument Serif',serif;font-size:56px;color:var(--orange);line-height:1}
+.sc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sc-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:18px;cursor:pointer;transition:all .15s}
+.sc-card:hover,.sc-card.sel{border-color:rgba(28,28,26,.25);background:var(--bg2)}
+.sc-card.sel{box-shadow:var(--shadow)}
+.sc-t{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:7px}
+.sc-d{font-family:'Instrument Serif',serif;font-size:30px;line-height:1;margin-bottom:4px}
+.d-up{color:var(--red)}.d-dn{color:var(--green)}.d-nu{color:var(--teal)}
+.sc-crcs{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2)}
+.sc-detail{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:26px;margin-top:14px}
+.scd-t{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:18px}
+.scd-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.scd-m{border-left:2px solid var(--teal-m);padding-left:13px}
+.scd-v{font-family:'Instrument Serif',serif;font-size:22px;color:var(--ink);line-height:1}
+.scd-l{font-size:11px;color:var(--ink2);margin-top:3px}
+.scd-note{font-size:13px;color:var(--ink2);line-height:1.6;padding-top:14px;border-top:1px solid var(--rule)}
 
-/* ── SCENARIO ENGINE ── */
-#scenarios{background:var(--bg2)}
-.scenario-header{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-bottom:48px}
-.property-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:28px}
-.pc-label{font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.15em;margin-bottom:12px}
-.pc-name{font-size:20px;font-weight:700;margin-bottom:4px}
-.pc-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
-.pc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.pc-stat-val{font-family:var(--font-mono);font-size:16px;font-weight:600;color:var(--text)}
-.pc-stat-label{font-size:10px;color:var(--text2);margin-top:2px}
-.scenario-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
-.sc-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px;cursor:pointer;transition:all .3s}
-.sc-card:hover,.sc-card.active{border-color:var(--teal);box-shadow:var(--glow-t)}
-.sc-name{font-size:14px;font-weight:700;margin-bottom:8px}
-.sc-delta{font-family:var(--font-mono);font-size:20px;font-weight:700;margin-bottom:4px}
-.sc-delta.up{color:var(--red)}
-.sc-delta.down{color:var(--green)}
-.sc-delta.neutral{color:var(--teal)}
-.sc-crcs{font-family:var(--font-mono);font-size:12px;color:var(--text2)}
-.scenario-detail{background:var(--bg3);border:1px solid var(--teal);border-radius:10px;padding:32px;margin-top:24px}
-.sd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:20px}
-.sd-metric{border-left:2px solid var(--teal);padding-left:16px}
-.sd-val{font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--teal)}
-.sd-label{font-size:11px;color:var(--text2);margin-top:4px}
+/* --- TRUST --- */
+#trust{background:var(--white)}
+.trust-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0 28px}
+.tkpi{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r2);padding:24px;text-align:center}
+.tkpi-v{font-family:'Instrument Serif',serif;font-size:42px;color:var(--ink);line-height:1;margin-bottom:6px}
+.tkpi-l{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--ink3);letter-spacing:.04em}
+.cm-label{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-bottom:14px}
+.confusion{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:250px;margin:0 auto 32px}
+.cm-c{padding:18px;text-align:center;border-radius:4px}
+.cm-tp{background:var(--green-l)}.cm-fp{background:var(--amber-l)}.cm-fn{background:var(--red-l)}.cm-tn{background:var(--teal-l)}
+.cm-n{font-family:'Instrument Serif',serif;font-size:32px;line-height:1}
+.cm-tp .cm-n{color:var(--green)}.cm-fp .cm-n{color:var(--amber)}.cm-fn .cm-n{color:var(--red)}.cm-tn .cm-n{color:var(--teal)}
+.cm-l{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--ink2);margin-top:3px}
+.trust-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.t-card{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r2);padding:24px;transition:box-shadow .15s}
+.t-card:hover{box-shadow:var(--shadow)}
+.t-card h3{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:8px}
+.t-card p{font-size:13px;color:var(--ink2);line-height:1.65}
 
-/* ── TRUST SECTION ── */
-#trust{background:var(--bg)}
-.trust-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:48px}
-.trust-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:32px;transition:all .3s}
-.trust-card:hover{border-color:var(--teal);box-shadow:var(--glow-t)}
-.tc-icon{font-size:28px;margin-bottom:16px}
-.tc-title{font-size:18px;font-weight:700;margin-bottom:12px}
-.tc-body{font-size:14px;color:var(--text2);line-height:1.7}
-.trust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
-.ts-item{text-align:center;padding:32px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;transition:all .3s}
-.ts-item:hover{border-color:var(--teal);box-shadow:var(--glow-t)}
-.ts-val{font-family:var(--font-mono);font-size:36px;font-weight:700;color:var(--teal);margin-bottom:8px}
-.ts-label{font-size:12px;color:var(--text2);letter-spacing:0.05em}
-.confusion-matrix{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:280px;margin:24px auto}
-.cm-cell{padding:24px;text-align:center;border-radius:4px}
-.cm-cell.tp{background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2)}
-.cm-cell.tn{background:rgba(0,229,200,0.1);border:1px solid rgba(0,229,200,0.2)}
-.cm-cell.fp{background:rgba(255,182,39,0.1);border:1px solid rgba(255,182,39,0.2)}
-.cm-cell.fn{background:rgba(255,45,85,0.1);border:1px solid rgba(255,45,85,0.2)}
-.cm-val{font-family:var(--font-mono);font-size:28px;font-weight:700}
-.cm-label{font-size:11px;color:var(--text2);margin-top:4px}
-.tp .cm-val{color:var(--green)}
-.tn .cm-val{color:var(--teal)}
-.fp .cm-val{color:var(--amber)}
-.fn .cm-val{color:var(--red)}
+/* --- USE CASES --- */
+#usecases{background:var(--bg)}
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.uc{background:var(--white);border:1px solid var(--rule);border-radius:var(--r2);padding:24px;transition:box-shadow .15s}
+.uc:hover{box-shadow:var(--shadow)}
+.uc-ico{width:38px;height:38px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+.uc-t{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.uc-p{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:10px}
+.uc-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);background:var(--teal-l);padding:4px 9px;border-radius:4px;display:inline-block}
 
-/* ── USE CASES ── */
-#usecases{background:var(--bg2)}
-.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
-.uc-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:28px;transition:all .3s;position:relative;overflow:hidden}
-.uc-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--teal),transparent)}
-.uc-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
-.uc-icon{width:44px;height:44px;border-radius:8px;background:rgba(0,229,200,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
-.uc-title{font-size:17px;font-weight:700;margin-bottom:8px}
-.uc-body{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
-.uc-metric{font-family:var(--font-mono);font-size:12px;color:var(--teal);background:rgba(0,229,200,0.06);padding:8px 12px;border-radius:4px;border:1px solid rgba(0,229,200,0.15)}
+/* --- INVESTOR --- */
+#investor{background:var(--white)}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:44px}
+.inv-metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.im{background:var(--bg);border-radius:var(--r2);padding:18px}
+.im-v{font-family:'Instrument Serif',serif;font-size:28px;color:var(--ink);line-height:1}
+.im-l{font-size:12px;color:var(--ink2);margin-top:4px}
+.roadmap{display:flex;flex-direction:column;gap:10px}
+.rm{display:flex;gap:12px}
+.rm-yr{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);flex-shrink:0;width:52px;padding-top:1px}
+.rm-t{font-size:13px;color:var(--ink2)}
+.comp-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px}
+.comp-table th{background:var(--bg2);padding:10px 13px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink2);border-bottom:1px solid var(--rule);letter-spacing:.05em}
+.comp-table td{padding:10px 13px;border-bottom:1px solid var(--rule2);font-family:'DM Mono',monospace;color:var(--ink2)}
+.comp-table tr.own td{color:var(--teal);font-weight:500;background:var(--teal-l)}
+.chk{color:var(--green)}.crs{color:var(--red)}
+.moat{background:var(--teal-l);border-radius:var(--r2);padding:16px;margin-top:14px}
+.moat-h{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:.07em;margin-bottom:7px}
+.moat p{font-size:13px;color:var(--teal);line-height:1.6}
 
-/* ── INVESTOR ── */
-#investor{background:var(--bg)}
-.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px}
-.inv-metrics{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.inv-metric{background:var(--bg2);border:1px solid var(--border);padding:24px;border-radius:8px}
-.im-val{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--teal);line-height:1}
-.im-label{font-size:12px;color:var(--text2);margin-top:8px}
-.comp-table{width:100%;border-collapse:collapse;margin-top:20px}
-.comp-table th{background:var(--bg3);padding:12px 16px;text-align:left;font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:0.1em;border-bottom:1px solid var(--border)}
-.comp-table td{padding:12px 16px;border-bottom:1px solid var(--border2);font-size:12px;color:var(--text2);font-family:var(--font-mono)}
-.comp-table tr.crcs-row td{color:var(--teal);font-weight:600}
-.check{color:var(--green)}
-.cross{color:var(--red)}
+/* --- FOOTER --- */
+footer{background:var(--ink);padding:52px 0 0}
+.footer-inner{max-width:1160px;margin:0 auto;padding:0 40px 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px}
+.fi-brand{font-family:'Instrument Serif',serif;font-size:20px;color:#f0ede6;margin-bottom:9px}
+.fi-brand em{font-style:italic;color:var(--teal-m)}
+.fi-sub{font-size:13px;color:#888880;line-height:1.7;max-width:255px;margin-bottom:12px}
+.fi-disc{font-family:'DM Mono',monospace;font-size:11px;color:#606058;line-height:1.6;max-width:255px}
+.fi-h{font-family:'DM Mono',monospace;font-size:10px;color:#606058;letter-spacing:.1em;margin-bottom:14px}
+.fi-a{display:block;font-size:13px;color:#888880;text-decoration:none;margin-bottom:7px;transition:color .15s}
+.fi-a:hover{color:#f0ede6}
+.footer-base{max-width:1160px;margin:0 auto;padding:16px 40px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center}
+.fb-l{font-family:'DM Mono',monospace;font-size:11px;color:#505048}
+.fb-r{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal-m);border:1px solid rgba(74,170,150,.25);padding:3px 9px;border-radius:4px}
 
-/* ── FOOTER ── */
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
-.footer-brand{font-size:16px;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px}
-.footer-brand span{color:var(--teal)}
-.footer-sub{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;max-width:280px}
-.footer-disclaimer{font-family:var(--font-mono);font-size:10px;color:var(--text3);line-height:1.6;max-width:280px}
-.footer-col h4{font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.15em;margin-bottom:20px}
-.footer-link{display:block;font-size:13px;color:var(--text2);text-decoration:none;margin-bottom:10px;transition:color .2s}
-.footer-link:hover{color:var(--teal)}
-.footer-bottom{border-top:1px solid var(--border);padding:20px 60px;display:flex;justify-content:space-between;align-items:center}
-.footer-bottom-text{font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:0.05em}
-.footer-tag{font-family:var(--font-mono);font-size:11px;color:var(--teal);background:rgba(0,229,200,0.06);padding:4px 10px;border:1px solid rgba(0,229,200,0.15);border-radius:3px}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-@keyframes glow-pulse{0%,100%{box-shadow:0 0 10px rgba(0,229,200,0.2)}50%{box-shadow:0 0 30px rgba(0,229,200,0.5)}}
-.fade-up{opacity:0;animation:fadeUp 0.6s ease forwards}
-.delay-1{animation-delay:0.1s}
-.delay-2{animation-delay:0.2s}
-.delay-3{animation-delay:0.3s}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite;margin-right:6px}
-
-/* ── RESPONSIVE BASICS ── */
 @media(max-width:900px){
-  section{padding:60px 24px}
-  .dash-grid{grid-template-columns:1fr}
-  .method-pillars{grid-template-columns:1fr}
-  .fin-matrix{grid-template-columns:1fr 1fr}
-  .hero-metrics{grid-template-columns:1fr 1fr}
-  .map-container{grid-template-columns:1fr}
-  .map-container{height:auto}
-  .map-viz{height:400px}
-  .map-sidebar{height:400px}
+  .wrap{padding:0 20px}.hero-kpis{grid-template-columns:1fr 1fr}
+  .map-body{grid-template-columns:1fr}.map-canvas-wrap{height:380px}.map-sidebar{height:auto}
+  .dash-grid,.method-pillars,.fin-grid,.uc-grid,.sc-cards,.trust-cards{grid-template-columns:1fr}
+  .dc.wide{grid-column:1}.sc-top,.inv-grid{grid-template-columns:1fr}
+  .pipe-grid{grid-template-columns:1fr 1fr}
+  footer .footer-inner{grid-template-columns:1fr 1fr}
   nav .nav-links{display:none}
-  footer{grid-template-columns:1fr}
-  .scenario-header{grid-template-columns:1fr}
-  .scenario-cards{grid-template-columns:1fr 1fr}
-  .uc-grid{grid-template-columns:1fr}
-  .trust-grid{grid-template-columns:1fr}
-  .inv-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
 <!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-inner" id="ticker">
-    <span class="ticker-item alert">⚠ IMD HEAVY RAIN ALERT — <span>Bellandur, HSR Layout, Koramangala</span> flood probability elevated | CRCS Score LIVE</span>
-    <span class="ticker-item">MONSOON SEASON 2024 — <span>Bengaluru cumulative rainfall 847mm (+12% above normal)</span></span>
-    <span class="ticker-item alert">GROUNDWATER ALERT — <span>Whitefield borewell depletion rate +18% YoY</span> | Water stress index elevated</span>
-    <span class="ticker-item">CRCS v3 — <span>25 wards analyzed</span> | Mean confidence factor: 0.709 | Last updated: June 2024</span>
-    <span class="ticker-item">RBI CLIMATE RISK GUIDELINES DRAFT — <span>Banks required to quantify property-level physical climate risk</span></span>
-    <span class="ticker-item alert">⚠ IMD HEAVY RAIN ALERT — <span>Bellandur, HSR Layout, Koramangala</span> flood probability elevated | CRCS Score LIVE</span>
-    <span class="ticker-item">MONSOON SEASON 2024 — <span>Bengaluru cumulative rainfall 847mm (+12% above normal)</span></span>
-    <span class="ticker-item alert">GROUNDWATER ALERT — <span>Whitefield borewell depletion rate +18% YoY</span> | Water stress index elevated</span>
-    <span class="ticker-item">CRCS v3 — <span>25 wards analyzed</span> | Mean confidence factor: 0.709 | Last updated: June 2024</span>
-    <span class="ticker-item">RBI CLIMATE RISK GUIDELINES DRAFT — <span>Banks required to quantify property-level physical climate risk</span></span>
+<div class="ticker">
+  <div class="ticker-inner" id="tkr">
+    <span class="tick-seg">IMD alert — <b>heavy rain warning active, Bengaluru South &amp; East zones</b></span>
+    <span class="tick-seg">Groundwater — <b>Whitefield borewell depletion +18% YoY per CGWB 2024</b></span>
+    <span class="tick-seg">CRCS v3 live — <b>25 wards scored · mean CRCS 46.2 · confidence 0.709</b></span>
+    <span class="tick-seg">RBI draft guidelines — <b>banks required to quantify property-level physical climate risk</b></span>
+    <span class="tick-seg">Monsoon 2024 — <b>cumulative rainfall 847mm, +12% above 30-year normal</b></span>
+    <span class="tick-seg">IMD alert — <b>heavy rain warning active, Bengaluru South &amp; East zones</b></span>
+    <span class="tick-seg">Groundwater — <b>Whitefield borewell depletion +18% YoY per CGWB 2024</b></span>
+    <span class="tick-seg">CRCS v3 live — <b>25 wards scored · mean CRCS 46.2 · confidence 0.709</b></span>
+    <span class="tick-seg">RBI draft guidelines — <b>banks required to quantify property-level physical climate risk</b></span>
+    <span class="tick-seg">Monsoon 2024 — <b>cumulative rainfall 847mm, +12% above 30-year normal</b></span>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <div class="nav-logo-mark">CR</div>
-    <div class="nav-logo-text"><span>CRCS</span> v3 — BENGALURU</div>
+  <div class="nav-w">
+    <div class="nav-logo">
+      <div class="logo-sq">CR</div>
+      <span class="nav-title">CRCS v3 &middot; Bengaluru</span>
+    </div>
+    <div class="nav-links">
+      <a href="#map-sec">Map</a>
+      <a href="#dashboard">Analytics</a>
+      <a href="#method">Method</a>
+      <a href="#rankings">Rankings</a>
+      <a href="#scenarios">Scenarios</a>
+      <a href="#investor">Investors</a>
+    </div>
+    <div class="nav-live"><span class="ndot"></span>Live scoring</div>
   </div>
-  <div class="nav-links">
-    <a href="#map-section">Risk Map</a>
-    <a href="#dashboard">Analytics</a>
-    <a href="#methodology">Methodology</a>
-    <a href="#rankings">Rankings</a>
-    <a href="#scenarios">Scenarios</a>
-    <a href="#investor">Investors</a>
-  </div>
-  <div class="nav-badge"><span class="live-dot"></span>LIVE SCORING</div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <canvas id="heroCanvas" class="hero-canvas"></canvas>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow fade-up">
-      <div class="hero-eyebrow-line"></div>
-      <span class="hero-eyebrow-text">India's First Ward-Level Climate Risk Credit Score</span>
-      <span class="hero-badge">CRCS v3</span>
+  <div class="wrap">
+    <div class="hero-tag">India's first ward-level climate risk credit score</div>
+    <h1 class="hero-h1">Climate risk has become<br><em>financial risk.</em></h1>
+    <p class="hero-sub">CRCS translates satellite data, infrastructure records, and financial signals into a single 0–100 score for every Bengaluru ward — the CIBIL score for climate risk in real estate.</p>
+    <div class="hero-btns">
+      <a href="#map-sec" class="btn btn-dark">Explore risk map</a>
+      <a href="#rankings" class="btn btn-ghost">Ward rankings</a>
+      <a href="#scenarios" class="btn btn-ghost">Bellandur simulation</a>
     </div>
-    <h1 class="hero-h1 fade-up delay-1">
-      <span class="line1">Climate Risk Has Become</span>
-      <span class="line2">Financial Risk.</span>
-    </h1>
-    <p class="hero-sub fade-up delay-2">CRCS converts satellite intelligence, infrastructure data, and financial stress signals into a standardized 0–100 climate risk score for every Bengaluru ward — the CIBIL score for climate risk in real estate.</p>
-    <div class="hero-ctas fade-up delay-3">
-      <a href="#map-section" class="btn-primary">Explore Risk Map</a>
-      <a href="#rankings" class="btn-secondary">Ward Rankings</a>
-      <a href="#scenarios" class="btn-secondary">Bellandur Simulation</a>
-    </div>
-    <div class="hero-metrics fade-up delay-3">
-      <div class="hero-metric">
-        <div class="hm-val">25</div>
-        <div class="hm-label">BENGALURU WARDS ANALYZED</div>
-      </div>
-      <div class="hero-metric">
-        <div class="hm-val">12</div>
-        <div class="hm-label">CLIMATE + FINANCIAL VARIABLES</div>
-      </div>
-      <div class="hero-metric">
-        <div class="hm-val">69.5</div>
-        <div class="hm-label">HIGHEST RISK: MAJESTIC</div>
-      </div>
-      <div class="hero-metric">
-        <div class="hm-val">76%</div>
-        <div class="hm-label">2022 FLOOD BACKTEST ACCURACY</div>
-      </div>
+    <div class="hero-kpis">
+      <div class="kpi"><div class="kpi-n">25</div><div class="kpi-l">Wards analyzed</div></div>
+      <div class="kpi"><div class="kpi-n">12</div><div class="kpi-l">Variables</div></div>
+      <div class="kpi"><div class="kpi-n">69.5</div><div class="kpi-l">Highest: Majestic</div></div>
+      <div class="kpi"><div class="kpi-n">76%</div><div class="kpi-l">2022 backtest accuracy</div></div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
 <!-- MAP SECTION -->
-<section id="map-section" style="padding:0">
+<section id="map-sec">
   <div class="map-header">
     <div>
-      <div class="section-eyebrow">Risk Intelligence</div>
-      <h2 class="section-title">Bengaluru Ward Risk Map</h2>
-      <p class="section-sub">Click any ward to view its full climate risk scorecard, sub-scores, and financial decision outputs.</p>
+      <div class="sec-label">Risk intelligence</div>
+      <h2 class="sec-h" style="margin-bottom:4px">Bengaluru ward risk map</h2>
+      <p style="font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace">Click any ward to open full scorecard</p>
     </div>
-    <div class="map-filters">
-      <button class="map-filter active" onclick="setLayer('composite')">Composite CRCS</button>
-      <button class="map-filter" onclick="setLayer('flood')">Flood Risk</button>
-      <button class="map-filter" onclick="setLayer('uhi')">Heat Island</button>
-      <button class="map-filter" onclick="setLayer('water')">Water Stress</button>
-      <button class="map-filter" onclick="setLayer('financial')">Financial Risk</button>
+    <div class="layer-pills">
+      <button class="lp on" onclick="setLayer('composite',this)">Composite CRCS</button>
+      <button class="lp" onclick="setLayer('flood',this)">Flood risk</button>
+      <button class="lp" onclick="setLayer('uhi',this)">Heat island</button>
+      <button class="lp" onclick="setLayer('water',this)">Water stress</button>
+      <button class="lp" onclick="setLayer('financial',this)">Financial</button>
     </div>
   </div>
-  <div class="map-container">
-    <div class="map-viz">
+  <div class="map-body">
+    <div class="map-canvas-wrap">
       <canvas id="mapCanvas"></canvas>
       <div class="map-legend">
-        <div class="legend-title">CRCS GRADE</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#00e676"></div>A — Low (0–25)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#00e5c8"></div>B — Moderate (26–40)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ffb627"></div>C — Elevated (41–55)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff6b35"></div>D — High (56–70)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff2d55"></div>E — Severe (71–100)</div>
+        <div class="ml-title">CRCS GRADE</div>
+        <div class="ml-row"><div class="ml-dot" style="background:#2a6830"></div>A — low (0–25)</div>
+        <div class="ml-row"><div class="ml-dot" style="background:#0a6655"></div>B — moderate (26–40)</div>
+        <div class="ml-row"><div class="ml-dot" style="background:#8a5c00"></div>C — elevated (41–55)</div>
+        <div class="ml-row"><div class="ml-dot" style="background:#8a3800"></div>D — high (56–70)</div>
+        <div class="ml-row"><div class="ml-dot" style="background:#922020"></div>E — severe (71–100)</div>
       </div>
     </div>
-    <div class="map-sidebar" id="mapSidebar">
-      <div class="sidebar-empty" id="sidebarEmpty">
-        <div class="sidebar-empty-icon">⊕</div>
-        <p>CLICK A WARD TO VIEW<br>FULL RISK SCORECARD</p>
+    <div class="map-sidebar">
+      <div class="sb-empty" id="sbEmpty">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="currentColor" stroke-width="1"/><circle cx="18" cy="18" r="5" stroke="currentColor" stroke-width="1"/><line x1="18" y1="1" x2="18" y2="7" stroke="currentColor" stroke-width="1"/><line x1="18" y1="29" x2="18" y2="35" stroke="currentColor" stroke-width="1"/><line x1="1" y1="18" x2="7" y2="18" stroke="currentColor" stroke-width="1"/><line x1="29" y1="18" x2="35" y2="18" stroke="currentColor" stroke-width="1"/></svg>
+        <p>Click any ward<br>to view full scorecard</p>
       </div>
-      <div class="ward-panel" id="wardPanel"></div>
+      <div class="sb-content" id="sbContent"></div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
 <!-- ANALYTICS DASHBOARD -->
 <section id="dashboard">
-  <div class="section-eyebrow">Live Analytics</div>
-  <h2 class="section-title">Risk Analytics Dashboard</h2>
-  <p class="section-sub">Seasonal climate risk trends, monsoon vulnerability curves, and cross-ward comparative analytics.</p>
-  <div class="dash-grid">
-    <div class="dash-card wide">
-      <div class="card-label"><span class="live-dot"></span>CRCS DISTRIBUTION — ALL 25 WARDS</div>
-      <div class="card-chart-area">
-        <canvas id="distChart"></canvas>
+  <div class="wrap">
+    <div class="sec-label">Live analytics</div>
+    <h2 class="sec-h">Risk analytics dashboard</h2>
+    <p class="sec-sub">Seasonal trends, monsoon flood probability, groundwater depletion, and cross-ward comparisons.</p>
+    <div class="dash-grid">
+      <div class="dc wide">
+        <div class="dc-label">CRCS SCORE DISTRIBUTION — ALL 25 WARDS (sorted high to low)</div>
+        <div class="dc-area"><canvas id="distChart"></canvas></div>
       </div>
-    </div>
-    <div class="dash-card danger">
-      <div class="card-label">MONSOON FLOOD PROBABILITY CURVE</div>
-      <div class="card-chart-area">
-        <canvas id="monsoonChart"></canvas>
+      <div class="dc">
+        <div class="dc-label">FLOOD PROBABILITY BY MONTH — BELLANDUR</div>
+        <div class="dc-area"><canvas id="monsoonChart"></canvas></div>
       </div>
-    </div>
-    <div class="dash-card">
-      <div class="card-label">RISK PILLAR RADAR — BELLANDUR</div>
-      <div class="card-chart-area">
-        <canvas id="radarChart"></canvas>
+      <div class="dc">
+        <div class="dc-label">RISK PILLAR RADAR — BELLANDUR vs CITY AVG</div>
+        <div class="dc-area"><canvas id="radarChart"></canvas></div>
       </div>
-    </div>
-    <div class="dash-card amber">
-      <div class="card-label">GROUNDWATER DEPLETION TREND</div>
-      <div class="card-chart-area">
-        <canvas id="gwChart"></canvas>
+      <div class="dc">
+        <div class="dc-label">GROUNDWATER DEPLETION TREND — WHITEFIELD (m below ground)</div>
+        <div class="dc-area"><canvas id="gwChart"></canvas></div>
       </div>
-    </div>
-    <div class="dash-card wide">
-      <div class="card-label">WARD RISK COMPARISON — TOP 10</div>
-      <div class="card-chart-area">
-        <canvas id="compareChart"></canvas>
+      <div class="dc wide">
+        <div class="dc-label">SUB-SCORE BREAKDOWN — TOP 10 HIGHEST-RISK WARDS</div>
+        <div class="dc-area"><canvas id="stackChart"></canvas></div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
 <!-- METHODOLOGY -->
-<section id="methodology">
-  <div class="section-eyebrow">Scientific Framework</div>
-  <h2 class="section-title">Scoring Methodology</h2>
-  <p class="section-sub">PCA-derived weights. Confidence-adjusted scoring. Monte Carlo uncertainty quantification. Validated against real flood events.</p>
-
-  <div class="method-pillars">
-    <div class="pillar-card flood">
-      <div class="pillar-icon">🌊</div>
-      <div class="pillar-name">Physical Risk</div>
-      <div class="pillar-weight">45%</div>
-      <ul class="pillar-vars">
-        <li>Flood Risk Index (ISRO Bhuvan + SRTM DEM)</li>
-        <li>Rainfall Intensity (IMD gridded + CHIRPS)</li>
-        <li>Urban Heat Island (MODIS LST + Landsat)</li>
-        <li>Water Stress Index (CGWB + BWSSB)</li>
-      </ul>
+<section id="method">
+  <div class="wrap">
+    <div class="sec-label">Scientific framework</div>
+    <h2 class="sec-h">Scoring methodology</h2>
+    <p class="sec-sub">PCA-derived weights, confidence-adjusted scoring, Monte Carlo uncertainty — validated against real flood events.</p>
+    <div class="method-pillars">
+      <div class="pillar p-blue">
+        <div class="p-pct">45%</div>
+        <div class="p-name">Physical risk</div>
+        <ul class="p-list">
+          <li>Flood risk index (ISRO Bhuvan + SRTM DEM)</li>
+          <li>Rainfall intensity (IMD gridded + CHIRPS v2)</li>
+          <li>Urban heat island (MODIS LST + Landsat)</li>
+          <li>Water stress (CGWB wells + BWSSB dispatch)</li>
+        </ul>
+      </div>
+      <div class="pillar p-amber">
+        <div class="p-pct">30%</div>
+        <div class="p-name">Exposure risk</div>
+        <ul class="p-list">
+          <li>Population density (Census + WorldPop 2023)</li>
+          <li>Built-up fraction (ISRO LISS-IV 5.8m)</li>
+          <li>Infrastructure vulnerability (BBMP + BESCOM)</li>
+          <li>Drainage capacity ratio (BBMP SWD GIS atlas)</li>
+        </ul>
+      </div>
+      <div class="pillar p-teal">
+        <div class="p-pct">25%</div>
+        <div class="p-name">Financial risk</div>
+        <ul class="p-list">
+          <li>Property price volatility (IGR Karnataka)</li>
+          <li>Insurance claim proxy (IRDAI district data)</li>
+          <li>Loan default proxy (CIBIL PIN-code agg.)</li>
+          <li>Tanker cost burden (BWSSB dispatch logs)</li>
+        </ul>
+      </div>
     </div>
-    <div class="pillar-card heat">
-      <div class="pillar-icon">🏙️</div>
-      <div class="pillar-name">Exposure Risk</div>
-      <div class="pillar-weight">30%</div>
-      <ul class="pillar-vars">
-        <li>Population Density (Census + WorldPop)</li>
-        <li>Built-Up Area Fraction (ISRO LISS-IV)</li>
-        <li>Infrastructure Vulnerability (BBMP+BESCOM)</li>
-        <li>Drainage Capacity Ratio (SWD GIS Atlas)</li>
-      </ul>
+    <div class="formula-block">
+      <div class="fb-lbl">CRCS V3 MASTER FORMULA</div>
+      <div class="fb-f">CRCS = <span class="hl">0.45</span>&thinsp;&times;&thinsp;Physical + <span class="hl">0.30</span>&thinsp;&times;&thinsp;Exposure + <span class="hl">0.25</span>&thinsp;&times;&thinsp;Financial</div>
+      <div class="fb-note">PC1 explains 82.6% of variance &middot; Confidence-adjusted &middot; 1,000 Monte Carlo simulations per ward</div>
     </div>
-    <div class="pillar-card water">
-      <div class="pillar-icon">📊</div>
-      <div class="pillar-name">Financial Risk</div>
-      <div class="pillar-weight">25%</div>
-      <ul class="pillar-vars">
-        <li>Property Price Volatility (IGR Karnataka)</li>
-        <li>Insurance Claim Proxy (IRDAI district data)</li>
-        <li>Loan Default Proxy (CIBIL PIN-code agg.)</li>
-        <li>Tanker Cost Burden (BWSSB dispatch logs)</li>
-      </ul>
+    <div class="flow-row">
+      <div class="fs"><div class="fs-n">01</div><div class="fs-l">Raw data</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">02</div><div class="fs-l">Ingestion</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">03</div><div class="fs-l">Processing</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">04</div><div class="fs-l">Normalise</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">05</div><div class="fs-l">Composite</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">06</div><div class="fs-l">Conf. adjust</div></div>
+      <div class="fa">&#8594;</div>
+      <div class="fs"><div class="fs-n">07</div><div class="fs-l">Score + CI</div></div>
     </div>
-  </div>
-
-  <div class="formula-box">
-    <div class="formula-label">CRCS v3 MASTER FORMULA</div>
-    <div class="formula-text">
-      <span class="f-cyan">CRCS</span> = <span class="f-teal">0.45</span>×Physical + <span class="f-teal">0.30</span>×Exposure + <span class="f-orange">0.25</span>×Financial
-    </div>
-    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-top:16px;letter-spacing:0.05em">PCA weights: PC1 explains 82.6% variance | Confidence-adjusted | 1,000 Monte Carlo simulations per ward</p>
-  </div>
-
-  <div class="flow-diagram">
-    <div class="flow-step"><div class="flow-step-num">01</div><div class="flow-step-label">Raw Data</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">02</div><div class="flow-step-label">Ingestion</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">03</div><div class="flow-step-label">Processing</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">04</div><div class="flow-step-label">Normalization</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">05</div><div class="flow-step-label">Composite Engine</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">06</div><div class="flow-step-label">Confidence Adj.</div></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step"><div class="flow-step-num">07</div><div class="flow-step-label">Final Score + CI</div></div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
 <!-- PIPELINE -->
 <section id="pipeline">
-  <div class="section-eyebrow">Data Architecture</div>
-  <h2 class="section-title">Production Data Pipeline</h2>
-  <p class="section-sub">From satellite raw data to financial decision output — 12 variables, 5 pipeline stages, real-time scoring API.</p>
-
-  <div class="pipe-grid">
-    <div class="pipe-stage">
-      <div class="pipe-stage-label">INGESTION</div>
-      <ul class="pipe-items">
-        <li>ISRO Bhuvan REST API</li>
-        <li>Sentinel-1/2 (ESA)</li>
-        <li>MODIS MOD11A2</li>
-        <li>Landsat 8/9 OLI</li>
-        <li>NASA ERA5 Climate</li>
-        <li>IMD FTP gridded</li>
-      </ul>
+  <div class="wrap">
+    <div class="sec-label">Data architecture</div>
+    <h2 class="sec-h">Production data pipeline</h2>
+    <p class="sec-sub">From raw satellite data to financial output — 12 variables, 5 stages, real-time scoring API.</p>
+    <div class="pipe-grid">
+      <div class="pcol">
+        <div class="pcol-h">INGESTION</div>
+        <div class="pi">ISRO Bhuvan REST</div><div class="pi">Sentinel-1/2 (ESA)</div>
+        <div class="pi">MODIS MOD11A2</div><div class="pi">Landsat 8/9 OLI</div>
+        <div class="pi">NASA ERA5</div><div class="pi">IMD FTP gridded</div>
+      </div>
+      <div class="pcol">
+        <div class="pcol-h">PROCESSING</div>
+        <div class="pi">GDAL reproject</div><div class="pi">Ward zonal stats</div>
+        <div class="pi">NetCDF CDO regrid</div><div class="pi">HDF4 rasterio LST</div>
+        <div class="pi">pykrige kriging</div><div class="pi">NDWI/NDVI extract</div>
+      </div>
+      <div class="pcol">
+        <div class="pcol-h">AGGREGATION</div>
+        <div class="pi">PostGIS polygons</div><div class="pi">TimescaleDB series</div>
+        <div class="pi">Min-max normalise</div><div class="pi">Confidence deflation</div>
+        <div class="pi">Monte Carlo CI</div><div class="pi">PCA weights apply</div>
+      </div>
+      <div class="pcol">
+        <div class="pcol-h">SCORING ENGINE</div>
+        <div class="pi">FastAPI composite</div><div class="pi">CI band compute</div>
+        <div class="pi">Grade classify</div><div class="pi">Financial translate</div>
+        <div class="pi">Scenario project</div><div class="pi">Confidence adjust</div>
+      </div>
+      <div class="pcol">
+        <div class="pcol-h">DELIVERY</div>
+        <div class="pi">REST API</div><div class="pi">Bank portfolio feed</div>
+        <div class="pi">Mapbox ward layer</div><div class="pi">PDF scorecard</div>
+        <div class="pi">Portal A–E badge</div><div class="pi">Airflow DAGs</div>
+      </div>
     </div>
-    <div class="pipe-stage">
-      <div class="pipe-stage-label">PROCESSING</div>
-      <ul class="pipe-items">
-        <li>GDAL raster reproject</li>
-        <li>Ward zonal statistics</li>
-        <li>NetCDF → CDO regrid</li>
-        <li>HDF4 → rasterio LST</li>
-        <li>pykrige interpolation</li>
-        <li>NDWI/NDVI extraction</li>
-      </ul>
+    <div class="tech-row">
+      <div class="tech-tag">PostGIS</div><div class="tech-tag">FastAPI</div><div class="tech-tag">rasterio</div>
+      <div class="tech-tag">GDAL 3.8</div><div class="tech-tag">scikit-learn</div><div class="tech-tag">TimescaleDB</div>
+      <div class="tech-tag">AWS S3</div><div class="tech-tag">Apache Airflow</div><div class="tech-tag">Mapbox GL JS</div>
+      <div class="tech-tag">pykrige</div><div class="tech-tag">GeoPandas</div><div class="tech-tag">React 18</div>
     </div>
-    <div class="pipe-stage">
-      <div class="pipe-stage-label">AGGREGATION</div>
-      <ul class="pipe-items">
-        <li>PostGIS ward polygons</li>
-        <li>TimescaleDB time series</li>
-        <li>Min-max normalization</li>
-        <li>Confidence deflation</li>
-        <li>Monte Carlo simulation</li>
-        <li>PCA weight application</li>
-      </ul>
-    </div>
-    <div class="pipe-stage">
-      <div class="pipe-stage-label">SCORING ENGINE</div>
-      <ul class="pipe-items">
-        <li>FastAPI composite engine</li>
-        <li>Confidence adjustment</li>
-        <li>CI band computation</li>
-        <li>Grade classification</li>
-        <li>Financial translation</li>
-        <li>Scenario projection</li>
-      </ul>
-    </div>
-    <div class="pipe-stage">
-      <div class="pipe-stage-label">DELIVERY</div>
-      <ul class="pipe-items">
-        <li>REST API (per inquiry)</li>
-        <li>Bank portfolio feed</li>
-        <li>Mapbox GL ward layer</li>
-        <li>PDF scorecard report</li>
-        <li>Portal badge (A–E)</li>
-        <li>Airflow DAG monitoring</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tech-row">
-    <div class="tech-badge">PostGIS</div>
-    <div class="tech-badge">FastAPI</div>
-    <div class="tech-badge">rasterio</div>
-    <div class="tech-badge">GDAL 3.8</div>
-    <div class="tech-badge">scikit-learn</div>
-    <div class="tech-badge">TimescaleDB</div>
-    <div class="tech-badge">AWS S3</div>
-    <div class="tech-badge">Apache Airflow</div>
-    <div class="tech-badge">Mapbox GL JS</div>
-    <div class="tech-badge">pykrige</div>
-    <div class="tech-badge">GeoPandas</div>
-    <div class="tech-badge">React 18</div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
 <!-- FINANCIAL MATRIX -->
 <section id="financial">
-  <div class="section-eyebrow">Decision Engine</div>
-  <h2 class="section-title">Financial Decision Matrix</h2>
-  <p class="section-sub">CRCS translates climate physics into rupee-denominated financial decisions for every stakeholder in the real estate value chain.</p>
-
-  <div class="fin-matrix">
-    <div class="fin-band grade-a">
-      <div class="fin-band-grade">A</div>
-      <div class="fin-band-range">CRCS 0–25</div>
-      <div class="fin-band-label">Low Risk</div>
-      <div class="fin-detail"><div class="fin-detail-key">BANK ACTION</div><div class="fin-detail-val">Standard Loan · LTV 90%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">LOAN PREMIUM</div><div class="fin-detail-val">0 bps</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">INSURANCE ADJ.</div><div class="fin-detail-val">Base + 5%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">BUYER SIGNAL</div><div class="fin-detail-val">Safe — Green Loan Eligible</div></div>
-    </div>
-    <div class="fin-band grade-b">
-      <div class="fin-band-grade">B</div>
-      <div class="fin-band-range">CRCS 26–40</div>
-      <div class="fin-band-label">Moderate Risk</div>
-      <div class="fin-detail"><div class="fin-detail-key">BANK ACTION</div><div class="fin-detail-val">Standard · LTV 85%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">LOAN PREMIUM</div><div class="fin-detail-val">+15 bps</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">INSURANCE ADJ.</div><div class="fin-detail-val">Base + 14%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">BUYER SIGNAL</div><div class="fin-detail-val">Monitor · Disclose</div></div>
-    </div>
-    <div class="fin-band grade-c">
-      <div class="fin-band-grade">C</div>
-      <div class="fin-band-range">CRCS 41–55</div>
-      <div class="fin-band-label">Elevated Risk</div>
-      <div class="fin-detail"><div class="fin-detail-key">BANK ACTION</div><div class="fin-detail-val">Review · LTV 85%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">LOAN PREMIUM</div><div class="fin-detail-val">+15 bps</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">INSURANCE ADJ.</div><div class="fin-detail-val">Base + 14%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">BUYER SIGNAL</div><div class="fin-detail-val">Check Sub-Scores</div></div>
-    </div>
-    <div class="fin-band grade-d">
-      <div class="fin-band-grade">D</div>
-      <div class="fin-band-range">CRCS 56–100</div>
-      <div class="fin-band-label">High / Severe Risk</div>
-      <div class="fin-detail"><div class="fin-detail-key">BANK ACTION</div><div class="fin-detail-val">Restrict · LTV 65–75%</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">LOAN PREMIUM</div><div class="fin-detail-val">+40–120 bps</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">INSURANCE ADJ.</div><div class="fin-detail-val">+28–42% + flood rider</div></div>
-      <div class="fin-detail"><div class="fin-detail-key">BUYER SIGNAL</div><div class="fin-detail-val">High Caution · Risk Report</div></div>
+  <div class="wrap">
+    <div class="sec-label">Decision engine</div>
+    <h2 class="sec-h">Financial decision matrix</h2>
+    <p class="sec-sub">CRCS translates climate risk into rupee-denominated decisions for every stakeholder in the real estate value chain.</p>
+    <div class="fin-grid">
+      <div class="fb2 fg-a">
+        <div class="fb2-grade">A</div><div class="fb2-range">CRCS 0–25</div>
+        <div class="fb2-level">Low risk</div>
+        <div class="fb2-row"><div class="fb2-k">BANK ACTION</div><div class="fb2-v">Standard · LTV 90%</div></div>
+        <div class="fb2-row"><div class="fb2-k">LOAN PREMIUM</div><div class="fb2-v">0 bps</div></div>
+        <div class="fb2-row"><div class="fb2-k">INSURANCE</div><div class="fb2-v">Base + 5%</div></div>
+        <div class="fb2-row"><div class="fb2-k">BUYER SIGNAL</div><div class="fb2-v">Safe · green loan eligible</div></div>
+      </div>
+      <div class="fb2 fg-b">
+        <div class="fb2-grade">B</div><div class="fb2-range">CRCS 26–40</div>
+        <div class="fb2-level">Moderate risk</div>
+        <div class="fb2-row"><div class="fb2-k">BANK ACTION</div><div class="fb2-v">Standard · LTV 85%</div></div>
+        <div class="fb2-row"><div class="fb2-k">LOAN PREMIUM</div><div class="fb2-v">+15 bps</div></div>
+        <div class="fb2-row"><div class="fb2-k">INSURANCE</div><div class="fb2-v">Base + 14%</div></div>
+        <div class="fb2-row"><div class="fb2-k">BUYER SIGNAL</div><div class="fb2-v">Monitor · disclose</div></div>
+      </div>
+      <div class="fb2 fg-c">
+        <div class="fb2-grade">C</div><div class="fb2-range">CRCS 41–55</div>
+        <div class="fb2-level">Elevated risk</div>
+        <div class="fb2-row"><div class="fb2-k">BANK ACTION</div><div class="fb2-v">Review · LTV 85%</div></div>
+        <div class="fb2-row"><div class="fb2-k">LOAN PREMIUM</div><div class="fb2-v">+15 bps</div></div>
+        <div class="fb2-row"><div class="fb2-k">INSURANCE</div><div class="fb2-v">Base + 14%</div></div>
+        <div class="fb2-row"><div class="fb2-k">BUYER SIGNAL</div><div class="fb2-v">Check sub-scores</div></div>
+      </div>
+      <div class="fb2 fg-d">
+        <div class="fb2-grade">D</div><div class="fb2-range">CRCS 56–100</div>
+        <div class="fb2-level">High / severe risk</div>
+        <div class="fb2-row"><div class="fb2-k">BANK ACTION</div><div class="fb2-v">Restrict · LTV 65–75%</div></div>
+        <div class="fb2-row"><div class="fb2-k">LOAN PREMIUM</div><div class="fb2-v">+40–120 bps</div></div>
+        <div class="fb2-row"><div class="fb2-k">INSURANCE</div><div class="fb2-v">+28–42% + flood rider</div></div>
+        <div class="fb2-row"><div class="fb2-k">BUYER SIGNAL</div><div class="fb2-v">High caution · risk report</div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
-<!-- WARD RANKINGS -->
+<!-- RANKINGS -->
 <section id="rankings">
-  <div class="section-eyebrow">Ward Intelligence</div>
-  <h2 class="section-title">Ward Risk Rankings</h2>
-  <p class="section-sub">All 25 Bengaluru wards ranked by final CRCS score. Click column headers to sort.</p>
-  <div class="rank-controls">
-    <input type="text" class="rank-search" id="rankSearch" placeholder="Search ward..." oninput="filterTable()">
-    <select class="rank-sort" id="rankSort" onchange="sortTable()">
-      <option value="crcs">Sort: CRCS Score</option>
-      <option value="physical">Sort: Physical Risk</option>
-      <option value="exposure">Sort: Exposure Risk</option>
-      <option value="financial">Sort: Financial Risk</option>
-    </select>
-  </div>
-  <div class="rank-table-wrap">
-    <table class="rank-table" id="rankTable">
-      <thead>
-        <tr>
+  <div class="wrap">
+    <div class="sec-label">Ward intelligence</div>
+    <h2 class="sec-h">Ward risk rankings</h2>
+    <p class="sec-sub">All 25 Bengaluru wards ranked by CRCS score. Click any column header to sort.</p>
+    <div class="rank-bar">
+      <input type="text" class="rank-search" id="rankSearch" placeholder="Search ward…" oninput="filterTable()">
+      <select class="rank-sort" id="rankSort" onchange="filterTable()">
+        <option value="crcs">Sort: CRCS score</option>
+        <option value="physical">Physical risk</option>
+        <option value="exposure">Exposure risk</option>
+        <option value="financial">Financial risk</option>
+        <option value="price">Price impact</option>
+      </select>
+    </div>
+    <div class="tbl-scroll">
+      <table class="rt">
+        <thead><tr>
           <th onclick="sortBy('rank')">#</th>
-          <th onclick="sortBy('ward')">WARD</th>
-          <th onclick="sortBy('physical')">PHYSICAL</th>
-          <th onclick="sortBy('exposure')">EXPOSURE</th>
-          <th onclick="sortBy('financial')">FINANCIAL</th>
-          <th onclick="sortBy('crcs')">CRCS ↓</th>
-          <th onclick="sortBy('grade')">GRADE</th>
-          <th onclick="sortBy('conf')">CONF.</th>
-          <th onclick="sortBy('price')">PRICE Δ</th>
-          <th onclick="sortBy('loan')">LOAN BPS</th>
-          <th>RECOMMENDATION</th>
-        </tr>
-      </thead>
-      <tbody id="rankBody"></tbody>
-    </table>
+          <th onclick="sortBy('ward')">Ward</th>
+          <th onclick="sortBy('physical')">Physical</th>
+          <th onclick="sortBy('exposure')">Exposure</th>
+          <th onclick="sortBy('financial')">Financial</th>
+          <th onclick="sortBy('crcs')">CRCS &#8595;</th>
+          <th>Grade</th>
+          <th onclick="sortBy('conf')">Conf.</th>
+          <th onclick="sortBy('price')">Price &#916;</th>
+          <th onclick="sortBy('loan')">Loan bps</th>
+          <th>Recommendation</th>
+        </tr></thead>
+        <tbody id="rankBody"></tbody>
+      </table>
+    </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<hr class="divider">
 
-<!-- SCENARIO ENGINE -->
+<!-- SCENARIOS -->
 <section id="scenarios">
-  <div class="section-eyebrow">Simulation Engine</div>
-  <h2 class="section-title">Bellandur Scenario Engine</h2>
-  <p class="section-sub">Forward-looking climate scenarios for a reference property. See how score, financial impact, and resilience investment ROI change across six scenarios.</p>
-
-  <div class="scenario-header">
-    <div class="property-card">
-      <div class="pc-label">REFERENCE PROPERTY</div>
-      <div class="pc-name">Flat 4B — Prestige Sunrise Phase II</div>
-      <div class="pc-sub">Bellandur, Bengaluru · 3BHK · 1,680 sqft</div>
-      <div class="pc-stats">
-        <div><div class="pc-stat-val">₹1.42 Cr</div><div class="pc-stat-label">PROPERTY VALUE</div></div>
-        <div><div class="pc-stat-val">₹1.07 Cr</div><div class="pc-stat-label">LOAN APPLIED</div></div>
-        <div><div class="pc-stat-val">Grade D</div><div class="pc-stat-label">CURRENT CRCS</div></div>
+  <div class="wrap">
+    <div class="sec-label">Simulation engine</div>
+    <h2 class="sec-h">Bellandur scenario engine</h2>
+    <p class="sec-sub">Forward-looking climate scenarios for a reference property — score movement, financial impact, resilience ROI.</p>
+    <div class="sc-top">
+      <div class="prop-card">
+        <div class="prop-lbl">REFERENCE PROPERTY</div>
+        <div class="prop-name">Flat 4B — Prestige Sunrise Phase II</div>
+        <div class="prop-sub">Bellandur, Bengaluru &middot; 3BHK &middot; 1,680 sqft</div>
+        <div class="prop-stats">
+          <div><div class="ps-v">&#8377;1.42 Cr</div><div class="ps-l">Value</div></div>
+          <div><div class="ps-v">&#8377;1.07 Cr</div><div class="ps-l">Loan applied</div></div>
+          <div><div class="ps-v">Grade D</div><div class="ps-l">Current grade</div></div>
+        </div>
       </div>
-    </div>
-    <div style="display:flex;flex-direction:column;justify-content:center;gap:12px">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px">
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.1em;margin-bottom:8px">BASE CRCS SCORE</div>
-        <div style="font-family:var(--font-mono);font-size:48px;font-weight:700;color:var(--orange);line-height:1">60.6</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px">Grade D · HIGH RISK · CI: 59.0–62.2</div>
-      </div>
-      <div style="background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2);border-radius:8px;padding:20px">
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--orange);letter-spacing:0.1em;margin-bottom:8px">10-YEAR FINANCIAL DISADVANTAGE</div>
-        <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--orange)">₹13.2 Lakh</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px">vs Grade A comparable property</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="scenario-cards" id="scenarioCards"></div>
-  <div class="scenario-detail" id="scenarioDetail">
-    <div style="font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.1em;margin-bottom:4px">SELECTED SCENARIO DETAILS</div>
-    <div style="font-size:16px;font-weight:700" id="sdTitle">Click a scenario to view details</div>
-    <div class="sd-grid" id="sdGrid"></div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- TRUST -->
-<section id="trust">
-  <div class="section-eyebrow">Validation Framework</div>
-  <h2 class="section-title">Why Trust This Score?</h2>
-  <p class="section-sub">CRCS is built on transparent, auditable methodology with real event validation and honest data confidence disclosure.</p>
-
-  <div class="trust-stats">
-    <div class="ts-item"><div class="ts-val">82.6%</div><div class="ts-label">PC1 VARIANCE EXPLAINED</div></div>
-    <div class="ts-item"><div class="ts-val">76%</div><div class="ts-label">2022 FLOOD BACKTEST ACCURACY</div></div>
-    <div class="ts-item"><div class="ts-val">100%</div><div class="ts-label">PRECISION (ZERO FALSE POSITIVES)</div></div>
-    <div class="ts-item"><div class="ts-val">0.709</div><div class="ts-label">MEAN MODEL CONFIDENCE FACTOR</div></div>
-  </div>
-
-  <div style="text-align:center;margin:40px 0 8px;font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:0.1em">2022 BENGALURU FLOOD VALIDATION — CONFUSION MATRIX</div>
-  <div class="confusion-matrix">
-    <div class="cm-cell tp"><div class="cm-val">3</div><div class="cm-label">TRUE POSITIVE</div></div>
-    <div class="cm-cell fp"><div class="cm-val">0</div><div class="cm-label">FALSE POSITIVE</div></div>
-    <div class="cm-cell fn"><div class="cm-val">6</div><div class="cm-label">FALSE NEGATIVE</div></div>
-    <div class="cm-cell tn"><div class="cm-val">16</div><div class="cm-label">TRUE NEGATIVE</div></div>
-  </div>
-
-  <div class="trust-grid">
-    <div class="trust-card">
-      <div class="tc-icon">🛰️</div>
-      <div class="tc-title">Real Satellite Data</div>
-      <div class="tc-body">Physical risk variables use ISRO Bhuvan flood susceptibility layers, MODIS 8-day Land Surface Temperature composites, and Sentinel-2 NDWI water indices — government-verified, tamper-proof remote sensing data validated against NRSC flood atlas 1998–2022.</div>
-    </div>
-    <div class="trust-card">
-      <div class="tc-icon">🔢</div>
-      <div class="tc-title">PCA-Derived Weights</div>
-      <div class="tc-body">Layer weights (0.45/0.30/0.25) are not hand-picked. They are derived from Principal Component Analysis on a 25×12 normalised ward matrix using scikit-learn. PC1 explains 82.6% of variance — statistically confirming that a single composite index is valid.</div>
-    </div>
-    <div class="trust-card">
-      <div class="tc-icon">📊</div>
-      <div class="tc-title">Confidence-Adjusted Scoring</div>
-      <div class="tc-body">Every variable carries a confidence score (0–1) derived from data quality × source reliability × resolution fit. Low-confidence variables (e.g. IRDAI insurance proxy at 0.45) contribute proportionally less. Model mean confidence: 0.709 — clearly disclosed, not hidden.</div>
-    </div>
-    <div class="trust-card">
-      <div class="tc-icon">🎲</div>
-      <div class="tc-title">Monte Carlo Uncertainty</div>
-      <div class="tc-body">1,000 simulations per ward with Gaussian noise scaled to data confidence. Average CI width: 3–4 CRCS points. Borderline wards (CI crossing band boundary) are flagged for manual underwriter review — the model does not pretend to precision it doesn't have.</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- USE CASES -->
-<section id="usecases">
-  <div class="section-eyebrow">Platform Applications</div>
-  <h2 class="section-title">Who Uses CRCS</h2>
-  <p class="section-sub">India's first climate risk credit score platform serving every stakeholder in the real estate and climate finance ecosystem.</p>
-  <div class="uc-grid">
-    <div class="uc-card">
-      <div class="uc-icon">🏦</div>
-      <div class="uc-title">Banks & HFCs</div>
-      <div class="uc-body">Integrate CRCS score into home loan origination systems via REST API. Automatically adjust LTV caps and interest rate premiums per ward. Meet RBI Climate Risk Guidelines 2023 compliance requirements.</div>
-      <div class="uc-metric">API: ₹50–200/inquiry · Monthly portfolio feed</div>
-    </div>
-    <div class="uc-card">
-      <div class="uc-icon">🛡️</div>
-      <div class="uc-title">Insurance Companies</div>
-      <div class="uc-body">Replace coarse IRDAI district-level data with ward-level physical risk scoring. Price property insurance premiums accurately. Mandate flood riders in Grade D/E wards. Meet IRDAI Climate Disclosure 2024 requirements.</div>
-      <div class="uc-metric">₹30–100/policy · Annual portfolio licence</div>
-    </div>
-    <div class="uc-card">
-      <div class="uc-icon">🏠</div>
-      <div class="uc-title">Home Buyers</div>
-      <div class="uc-body">Understand the climate risk of a specific property before purchase. See A–E grade, sub-scores, and rupee financial impact. Compare Bellandur (Grade D) vs Yelahanka (Grade A) on climate terms.</div>
-      <div class="uc-metric">Freemium · ₹500–2,000 full report</div>
-    </div>
-    <div class="uc-card">
-      <div class="uc-icon">🏗️</div>
-      <div class="uc-title">Real Estate Developers</div>
-      <div class="uc-body">Site selection using pre-development CRCS assessment. Market Grade A/B projects as climate-resilient. Early-stage risk reports to de-risk land acquisition. Climate moat in project differentiation.</div>
-      <div class="uc-metric">₹2–10 lakh/project report</div>
-    </div>
-    <div class="uc-card">
-      <div class="uc-icon">🗺️</div>
-      <div class="uc-title">Urban Planners & BBMP</div>
-      <div class="uc-body">Ward-level CRCS dashboard for infrastructure investment prioritisation. Identify Grade D/E wards for emergency drainage upgrade. Monitor seasonal score changes. Mandate climate EIA for new commercial developments.</div>
-      <div class="uc-metric">₹50–200 lakh/year govt contract</div>
-    </div>
-    <div class="uc-card">
-      <div class="uc-icon">🌐</div>
-      <div class="uc-title">Property Portals</div>
-      <div class="uc-body">Add CRCS A–E badge to property listings on MagicBricks, 99acres, Housing.com. Differentiate listings with climate intelligence. Buyers increasingly cite climate risk as a purchase factor.</div>
-      <div class="uc-metric">₹10–30/listing · Revenue share</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- INVESTOR -->
-<section id="investor">
-  <div class="section-eyebrow">Investor Intelligence</div>
-  <h2 class="section-title">The Investment Case</h2>
-  <p class="section-sub">India's ₹260 lakh crore residential real estate market prices climate risk at zero. CRCS is the infrastructure layer that corrects this systemic mispricing.</p>
-
-  <div class="inv-grid">
-    <div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:20px">Market Metrics</div>
-      <div class="inv-metrics">
-        <div class="inv-metric"><div class="im-val">₹260L Cr</div><div class="im-label">TOTAL ADDRESSABLE MARKET (Indian RE)</div></div>
-        <div class="inv-metric"><div class="im-val">₹1.5 Cr</div><div class="im-label">PROJECTED Y1 ARR</div></div>
-        <div class="inv-metric"><div class="im-val">₹17 Cr</div><div class="im-label">PROJECTED Y3 ARR</div></div>
-        <div class="inv-metric"><div class="im-val">₹3–5 Cr</div><div class="im-label">SEED ROUND ASK</div></div>
-      </div>
-      <div style="margin-top:32px">
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal);letter-spacing:0.1em;margin-bottom:16px">EXPANSION ROADMAP</div>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal);width:80px;flex-shrink:0;padding-top:2px">2025</div>
-            <div style="font-size:13px;color:var(--text2)">25 → 198 Bengaluru wards. 2 bank API pilots. BBMP MoU. IRDAI engagement.</div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal);width:80px;flex-shrink:0;padding-top:2px">2026–27</div>
-            <div style="font-size:13px;color:var(--text2)">Mumbai, Delhi NCR, Chennai, Hyderabad, Pune. Series A ₹20 Cr.</div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal);width:80px;flex-shrink:0;padding-top:2px">2028–30</div>
-            <div style="font-size:13px;color:var(--text2)">100 Indian cities. RBI mandate integration. National RE platform.</div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal);width:80px;flex-shrink:0;padding-top:2px">2031+</div>
-            <div style="font-size:13px;color:var(--text2)">SE Asia, South Asia, Africa expansion. World Bank / ADB partnerships.</div>
-          </div>
+      <div class="base-card">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-bottom:5px">BASE CRCS SCORE</div>
+          <div class="base-n">60.6</div>
+          <div style="font-size:13px;color:var(--ink2)">Grade D &middot; High risk &middot; CI: 59.0–62.2</div>
+        </div>
+        <div style="border-top:1px solid var(--rule);padding-top:12px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-bottom:5px">10-YEAR FINANCIAL DISADVANTAGE</div>
+          <div style="font-family:'Instrument Serif',serif;font-size:30px;color:var(--orange)">&#8377;13.2 lakh</div>
+          <div style="font-size:12px;color:var(--ink2)">vs Grade A comparable property</div>
         </div>
       </div>
     </div>
-    <div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:20px">Competitive Landscape</div>
-      <table class="comp-table">
-        <thead>
-          <tr>
-            <th>PLATFORM</th>
-            <th>INDIA?</th>
-            <th>WARD-LEVEL?</th>
-            <th>FINANCIAL OUTPUT?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>First Street Foundation</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
-          <tr><td>Zillow Climate Risk</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
-          <tr><td>Moody's Climate Analytics</td><td>Partial</td><td class="cross">✗</td><td class="cross">✗</td></tr>
-          <tr><td>BlackRock Aladdin Climate</td><td>Portfolio only</td><td class="cross">✗</td><td class="cross">✗</td></tr>
-          <tr class="crcs-row"><td>CRCS v3 (this platform)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        </tbody>
-      </table>
-      <div style="background:rgba(0,229,200,0.04);border:1px solid rgba(0,229,200,0.15);border-radius:8px;padding:20px;margin-top:20px">
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--teal);letter-spacing:0.1em;margin-bottom:10px">COMPETITIVE MOAT</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.7">Only India-native, ward-level, financially-translated climate risk scoring engine. ISRO/IMD/BBMP data integration creates a regulatory and data moat that foreign entrants cannot replicate. PCA-validated methodology is academically defensible and publishable.</div>
+    <div class="sc-cards" id="scCards"></div>
+    <div class="sc-detail" id="scDetail">
+      <div class="scd-t" id="scdTitle">Select a scenario to view details</div>
+      <div class="scd-metrics" id="scdMetrics"></div>
+      <div class="scd-note" id="scdNote"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TRUST -->
+<section id="trust">
+  <div class="wrap">
+    <div class="sec-label">Validation framework</div>
+    <h2 class="sec-h">Why trust this score?</h2>
+    <p class="sec-sub">Transparent, auditable methodology. Real event validation. Honest data confidence disclosure.</p>
+    <div class="trust-kpis">
+      <div class="tkpi"><div class="tkpi-v">82.6%</div><div class="tkpi-l">PC1 variance explained</div></div>
+      <div class="tkpi"><div class="tkpi-v">76%</div><div class="tkpi-l">2022 flood backtest accuracy</div></div>
+      <div class="tkpi"><div class="tkpi-v">100%</div><div class="tkpi-l">Precision (zero false positives)</div></div>
+      <div class="tkpi"><div class="tkpi-v">0.709</div><div class="tkpi-l">Mean model confidence factor</div></div>
+    </div>
+    <div class="cm-label">2022 Bengaluru flood validation — confusion matrix</div>
+    <div class="confusion">
+      <div class="cm-c cm-tp"><div class="cm-n">3</div><div class="cm-l">True positive</div></div>
+      <div class="cm-c cm-fp"><div class="cm-n">0</div><div class="cm-l">False positive</div></div>
+      <div class="cm-c cm-fn"><div class="cm-n">6</div><div class="cm-l">False negative</div></div>
+      <div class="cm-c cm-tn"><div class="cm-n">16</div><div class="cm-l">True negative</div></div>
+    </div>
+    <div class="trust-cards">
+      <div class="t-card"><h3>Real satellite data</h3><p>Physical risk variables use ISRO Bhuvan flood susceptibility layers, MODIS 8-day Land Surface Temperature composites (calibrated ±0.5K), and Sentinel-2 NDWI indices — validated against NRSC flood atlas 1998–2022 covering 25 years of events.</p></div>
+      <div class="t-card"><h3>PCA-derived weights</h3><p>Layer weights (0.45 / 0.30 / 0.25) are not hand-picked. Derived from Principal Component Analysis on a 25×12 normalised ward matrix using scikit-learn. PC1 explains 82.6% of variance — statistically confirming a composite index is valid.</p></div>
+      <div class="t-card"><h3>Confidence-adjusted scoring</h3><p>Every variable carries a confidence score (data quality × source reliability × resolution fit). Low-confidence variables (e.g. IRDAI insurance proxy at 0.45) contribute proportionally less. Mean confidence 0.709 — clearly disclosed, not hidden.</p></div>
+      <div class="t-card"><h3>Monte Carlo uncertainty</h3><p>1,000 simulations per ward with Gaussian noise scaled to data confidence. Average CI width 3–4 CRCS points. Borderline wards (CI crossing a band boundary) are flagged for manual review — the model does not pretend to precision it doesn't have.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div class="wrap">
+    <div class="sec-label">Platform applications</div>
+    <h2 class="sec-h">Who uses CRCS</h2>
+    <p class="sec-sub">India's first climate risk credit score platform serving every stakeholder in real estate and climate finance.</p>
+    <div class="uc-grid">
+      <div class="uc"><div class="uc-ico">&#127970;</div><div class="uc-t">Banks &amp; HFCs</div><p class="uc-p">Integrate CRCS into home loan origination via REST API. Automatically adjust LTV caps and rate premiums. Meet RBI Climate Risk Guidelines 2023 compliance.</p><div class="uc-badge">&#8377;50–200/inquiry · monthly feed</div></div>
+      <div class="uc"><div class="uc-ico">&#128737;</div><div class="uc-t">Insurance companies</div><p class="uc-p">Replace coarse IRDAI district data with ward-level physical risk scoring. Price property premiums accurately. Meet IRDAI Climate Disclosure 2024.</p><div class="uc-badge">&#8377;30–100/policy · annual licence</div></div>
+      <div class="uc"><div class="uc-ico">&#127968;</div><div class="uc-t">Home buyers</div><p class="uc-p">Understand climate risk before purchase. A–E grade, sub-scores, rupee financial impact. Compare Bellandur (Grade D) vs Yelahanka (Grade A) on climate terms.</p><div class="uc-badge">Freemium · &#8377;500–2,000 full report</div></div>
+      <div class="uc"><div class="uc-ico">&#127959;</div><div class="uc-t">Developers</div><p class="uc-p">Site selection using pre-development CRCS assessment. Market Grade A/B projects as climate-resilient. Early risk reports to de-risk land acquisition decisions.</p><div class="uc-badge">&#8377;2–10 lakh/project report</div></div>
+      <div class="uc"><div class="uc-ico">&#128506;</div><div class="uc-t">Urban planners</div><p class="uc-p">Ward-level dashboard for infrastructure investment prioritisation. Identify Grade D/E wards for emergency upgrades. Mandate climate EIA for new developments.</p><div class="uc-badge">&#8377;50–200 lakh/year govt contract</div></div>
+      <div class="uc"><div class="uc-ico">&#127758;</div><div class="uc-t">Property portals</div><p class="uc-p">Add CRCS A–E badge to listings on MagicBricks, 99acres, Housing.com. Differentiate with climate intelligence as buyer awareness grows.</p><div class="uc-badge">&#8377;10–30/listing · revenue share</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INVESTOR -->
+<section id="investor">
+  <div class="wrap">
+    <div class="sec-label">Investor intelligence</div>
+    <h2 class="sec-h">The investment case</h2>
+    <p class="sec-sub">India's &#8377;260 lakh crore residential real estate market prices climate risk at zero. CRCS is the infrastructure layer that corrects this systemic mispricing.</p>
+    <div class="inv-grid">
+      <div>
+        <div class="inv-metrics">
+          <div class="im"><div class="im-v">&#8377;260L Cr</div><div class="im-l">Total addressable market</div></div>
+          <div class="im"><div class="im-v">&#8377;1.5 Cr</div><div class="im-l">Projected Y1 ARR</div></div>
+          <div class="im"><div class="im-v">&#8377;17 Cr</div><div class="im-l">Projected Y3 ARR</div></div>
+          <div class="im"><div class="im-v">&#8377;3–5 Cr</div><div class="im-l">Seed round ask</div></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.07em;margin-bottom:10px">EXPANSION ROADMAP</div>
+        <div class="roadmap">
+          <div class="rm"><div class="rm-yr">2025</div><div class="rm-t">25 &#8594; 198 Bengaluru wards. 2 bank API pilots. BBMP MoU. IRDAI engagement.</div></div>
+          <div class="rm"><div class="rm-yr">2026–27</div><div class="rm-t">Mumbai, Delhi NCR, Chennai, Hyderabad, Pune. Series A &#8377;20 Cr target.</div></div>
+          <div class="rm"><div class="rm-yr">2028–30</div><div class="rm-t">100 Indian cities. RBI mandate integration. National RE platform.</div></div>
+          <div class="rm"><div class="rm-yr">2031+</div><div class="rm-t">SE Asia and South Asia expansion. World Bank / ADB partnerships.</div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:10px">Competitive landscape</div>
+        <table class="comp-table">
+          <thead><tr><th>Platform</th><th>India?</th><th>Ward-level?</th><th>Financial output?</th></tr></thead>
+          <tbody>
+            <tr><td>First Street Foundation</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td></tr>
+            <tr><td>Zillow Climate Risk</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td></tr>
+            <tr><td>Moody's Climate Analytics</td><td>Partial</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td></tr>
+            <tr><td>BlackRock Aladdin Climate</td><td>Portfolio only</td><td class="crs">&#10007;</td><td class="crs">&#10007;</td></tr>
+            <tr class="own"><td>CRCS v3 (this platform)</td><td class="chk">&#10003;</td><td class="chk">&#10003;</td><td class="chk">&#10003;</td></tr>
+          </tbody>
+        </table>
+        <div class="moat"><div class="moat-h">COMPETITIVE MOAT</div><p>Only India-native, ward-level, financially-translated climate risk scoring engine. ISRO/IMD/BBMP data integration creates a regulatory and data moat that foreign entrants cannot replicate. PCA-validated, academically defensible methodology.</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
 <!-- FOOTER -->
 <footer>
-  <div>
-    <div class="footer-brand"><span>CRCS</span> v3</div>
-    <div class="footer-sub">India's first ward-level Climate Risk Credit Score for real estate. Built using open satellite intelligence, government records, and financial risk signals.</div>
-    <div class="footer-disclaimer">DISCLAIMER: CRCS scores are decision-support tools, not regulated credit scores. Financial decisions should involve qualified underwriters. Scores updated seasonally.</div>
+  <div class="footer-inner">
+    <div>
+      <div class="fi-brand">CRCS <em>v3</em></div>
+      <div class="fi-sub">India's first ward-level climate risk credit score for real estate. Built using open satellite intelligence, government records, and financial risk signals.</div>
+      <div class="fi-disc">Disclaimer: CRCS scores are decision-support tools, not regulated credit scores. Final decisions require qualified underwriters. Scores updated seasonally.</div>
+    </div>
+    <div>
+      <div class="fi-h">METHODOLOGY</div>
+      <a href="#method" class="fi-a">Scoring framework</a>
+      <a href="#pipeline" class="fi-a">Data pipeline</a>
+      <a href="#trust" class="fi-a">Validation</a>
+      <a href="#" class="fi-a">Technical paper</a>
+      <a href="#" class="fi-a">GitHub</a>
+    </div>
+    <div>
+      <div class="fi-h">DATA SOURCES</div>
+      <a href="#" class="fi-a">ISRO Bhuvan</a>
+      <a href="#" class="fi-a">IMD gridded data</a>
+      <a href="#" class="fi-a">NASA EarthData</a>
+      <a href="#" class="fi-a">BBMP open data</a>
+      <a href="#" class="fi-a">WRI Aqueduct</a>
+    </div>
+    <div>
+      <div class="fi-h">CONTACT</div>
+      <a href="#" class="fi-a">LinkedIn</a>
+      <a href="#" class="fi-a">Research enquiries</a>
+      <a href="#" class="fi-a">Bank API access</a>
+      <a href="#" class="fi-a">Government partnerships</a>
+    </div>
   </div>
-  <div>
-    <h4>METHODOLOGY</h4>
-    <a href="#methodology" class="footer-link">Scoring Framework</a>
-    <a href="#pipeline" class="footer-link">Data Pipeline</a>
-    <a href="#trust" class="footer-link">Validation</a>
-    <a href="#" class="footer-link">Technical Paper</a>
-    <a href="#" class="footer-link">GitHub</a>
-  </div>
-  <div>
-    <h4>DATA SOURCES</h4>
-    <a href="#" class="footer-link">ISRO Bhuvan</a>
-    <a href="#" class="footer-link">IMD Gridded Data</a>
-    <a href="#" class="footer-link">NASA EarthData</a>
-    <a href="#" class="footer-link">BBMP Open Data</a>
-    <a href="#" class="footer-link">WRI Aqueduct</a>
-  </div>
-  <div>
-    <h4>CONTACT</h4>
-    <a href="#" class="footer-link">LinkedIn</a>
-    <a href="#" class="footer-link">Research Enquiries</a>
-    <a href="#" class="footer-link">Bank API Access</a>
-    <a href="#" class="footer-link">Government Partnerships</a>
+  <div class="footer-base">
+    <div class="fb-l">&#169; 2024 CRCS v3 &middot; Bengaluru Climate Risk Intelligence</div>
+    <div class="fb-r">Built using open climate intelligence</div>
   </div>
 </footer>
-<div class="footer-bottom">
-  <div class="footer-bottom-text">© 2024 CRCS v3 · BENGALURU CLIMATE RISK INTELLIGENCE PLATFORM</div>
-  <div class="footer-tag">Built using open climate intelligence</div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────
+// ── DATA ─────────────────────────────────────────────────────────────────
 const WARDS = [
-  {rank:1,ward:'Majestic',physical:71.8,exposure:86.4,financial:45.2,crcs:69.5,grade:'D',conf:0.709,price:-5.8,loan:55,rec:'Rate premium +55bps; LTV 75%'},
-  {rank:2,ward:'Bellandur',physical:69.7,exposure:65.9,financial:37.8,crcs:60.6,grade:'D',conf:0.709,price:-4.7,loan:55,rec:'Flood insurance rider mandatory'},
-  {rank:3,ward:'BTM Layout',physical:63.6,exposure:69.4,financial:34.5,crcs:58.1,grade:'D',conf:0.709,price:-4.4,loan:55,rec:'LTV capped 75%'},
-  {rank:4,ward:'Shivajinagar',physical:56.4,exposure:74.7,financial:29.3,crcs:55.1,grade:'C',conf:0.709,price:-4.0,loan:15,rec:'CI borderline D — manual review'},
-  {rank:5,ward:'Koramangala',physical:62.3,exposure:66.4,financial:31.4,crcs:55.8,grade:'C',conf:0.709,price:-4.1,loan:15,rec:'Filled tank-bed disclosure'},
-  {rank:6,ward:'Marathahalli',physical:63.8,exposure:60.4,financial:34.3,crcs:55.4,grade:'C',conf:0.709,price:-4.1,loan:15,rec:'Backtest FN — drainage flag'},
-  {rank:7,ward:'HSR Layout',physical:58.2,exposure:61.9,financial:31.2,crcs:52.6,grade:'C',conf:0.709,price:-3.7,loan:15,rec:'Manual underwriter review'},
-  {rank:8,ward:'Bommanahalli',physical:59.7,exposure:58.9,financial:29.9,crcs:52.0,grade:'C',conf:0.709,price:-3.7,loan:15,rec:'Backtest FN — drainage flag'},
-  {rank:9,ward:'KR Puram',physical:60.7,exposure:56.9,financial:31.8,crcs:52.4,grade:'C',conf:0.709,price:-3.7,loan:15,rec:'Nala encroachment risk'},
-  {rank:10,ward:'Domlur',physical:53.5,exposure:66.1,financial:26.8,crcs:50.6,grade:'C',conf:0.709,price:-3.5,loan:15,rec:'Backtest FN — verify drains'},
+  {rank:1,ward:'Majestic',       physical:71.8,exposure:86.4,financial:45.2,crcs:69.5,grade:'D',conf:0.709,price:-5.8,loan:55, rec:'Rate +55bps; LTV 75%; flood rider mandatory'},
+  {rank:2,ward:'Bellandur',      physical:69.7,exposure:65.9,financial:37.8,crcs:60.6,grade:'D',conf:0.709,price:-4.7,loan:55, rec:'Flood insurance rider mandatory'},
+  {rank:3,ward:'BTM Layout',     physical:63.6,exposure:69.4,financial:34.5,crcs:58.1,grade:'D',conf:0.709,price:-4.4,loan:55, rec:'LTV capped 75%'},
+  {rank:4,ward:'Koramangala',    physical:62.3,exposure:66.4,financial:31.4,crcs:55.8,grade:'C',conf:0.709,price:-4.1,loan:15, rec:'Filled tank-bed; disclose'},
+  {rank:5,ward:'Marathahalli',   physical:63.8,exposure:60.4,financial:34.3,crcs:55.4,grade:'C',conf:0.709,price:-4.1,loan:15, rec:'Backtest FN — drainage flag'},
+  {rank:6,ward:'Shivajinagar',   physical:56.4,exposure:74.7,financial:29.3,crcs:55.1,grade:'C',conf:0.709,price:-4.0,loan:15, rec:'CI borderline D — manual review'},
+  {rank:7,ward:'HSR Layout',     physical:58.2,exposure:61.9,financial:31.2,crcs:52.6,grade:'C',conf:0.709,price:-3.7,loan:15, rec:'Manual underwriter review'},
+  {rank:8,ward:'KR Puram',       physical:60.7,exposure:56.9,financial:31.8,crcs:52.4,grade:'C',conf:0.709,price:-3.7,loan:15, rec:'Nala encroachment risk'},
+  {rank:9,ward:'Bommanahalli',   physical:59.7,exposure:58.9,financial:29.9,crcs:52.0,grade:'C',conf:0.709,price:-3.7,loan:15, rec:'Backtest FN — drainage flag'},
+  {rank:10,ward:'Domlur',        physical:53.5,exposure:66.1,financial:26.8,crcs:50.6,grade:'C',conf:0.709,price:-3.5,loan:15, rec:'Backtest FN — verify drains'},
   {rank:11,ward:'Electronic City',physical:58.0,exposure:55.0,financial:32.1,crcs:50.6,grade:'C',conf:0.709,price:-3.5,loan:15,rec:'Water risk disclosure'},
   {rank:12,ward:'Bannerghatta Rd',physical:55.9,exposure:54.1,financial:30.4,crcs:49.0,grade:'C',conf:0.709,price:-3.3,loan:15,rec:'Annual climate review'},
-  {rank:13,ward:'Indiranagar',physical:48.5,exposure:59.6,financial:25.3,crcs:46.0,grade:'C',conf:0.709,price:-2.9,loan:15,rec:'UHI moderate — disclose'},
-  {rank:14,ward:'Whitefield',physical:50.5,exposure:51.0,financial:24.7,crcs:44.2,grade:'C',conf:0.709,price:-2.7,loan:15,rec:'Groundwater monitoring flag'},
-  {rank:15,ward:'CV Raman Nagar',physical:47.0,exposure:57.4,financial:24.1,crcs:44.4,grade:'C',conf:0.709,price:-2.7,loan:15,rec:'Standard +15bps'},
-  {rank:16,ward:'RT Nagar',physical:46.0,exposure:56.2,financial:22.4,crcs:43.1,grade:'C',conf:0.709,price:-2.6,loan:15,rec:'Standard +15bps'},
-  {rank:17,ward:'Hebbal',physical:43.2,exposure:46.9,financial:21.2,crcs:38.8,grade:'B',conf:0.709,price:-2.1,loan:15,rec:'Monitor; no restriction'},
-  {rank:18,ward:'Rajajinagar',physical:40.9,exposure:54.4,financial:19.8,crcs:39.7,grade:'B',conf:0.709,price:-2.2,loan:15,rec:'Drainage adequate'},
-  {rank:19,ward:'Vijayanagar',physical:38.6,exposure:51.2,financial:18.4,crcs:37.3,grade:'B',conf:0.709,price:-1.9,loan:15,rec:'No restriction'},
-  {rank:20,ward:'JP Nagar',physical:39.2,exposure:50.9,financial:19.4,crcs:37.8,grade:'B',conf:0.709,price:-1.9,loan:15,rec:'No restriction'},
-  {rank:21,ward:'Jayanagar',physical:36.1,exposure:50.5,financial:17.5,crcs:35.8,grade:'B',conf:0.709,price:-1.7,loan:15,rec:'Good historical resilience'},
-  {rank:22,ward:'Basavanagudi',physical:34.1,exposure:48.6,financial:16.7,crcs:34.1,grade:'B',conf:0.709,price:-1.5,loan:15,rec:'No flags'},
-  {rank:23,ward:'Malleswaram',physical:30.4,exposure:47.2,financial:15.0,crcs:31.6,grade:'B',conf:0.709,price:-1.2,loan:15,rec:'Safer zone'},
-  {rank:24,ward:'Yelahanka',physical:26.1,exposure:35.2,financial:12.9,crcs:25.5,grade:'A',conf:0.709,price:-0.4,loan:0,rec:'Green loan eligible'},
-  {rank:25,ward:'Kengeri',physical:22.7,exposure:32.5,financial:11.5,crcs:22.8,grade:'A',conf:0.709,price:-0.1,loan:0,rec:'Lowest risk — green loan'},
+  {rank:13,ward:'Indiranagar',   physical:48.5,exposure:59.6,financial:25.3,crcs:46.0,grade:'C',conf:0.709,price:-2.9,loan:15, rec:'UHI moderate — disclose'},
+  {rank:14,ward:'CV Raman Nagar',physical:47.0,exposure:57.4,financial:24.1,crcs:44.4,grade:'C',conf:0.709,price:-2.7,loan:15, rec:'Standard +15bps'},
+  {rank:15,ward:'Whitefield',    physical:50.5,exposure:51.0,financial:24.7,crcs:44.2,grade:'C',conf:0.709,price:-2.7,loan:15, rec:'Groundwater monitoring flag'},
+  {rank:16,ward:'RT Nagar',      physical:46.0,exposure:56.2,financial:22.4,crcs:43.1,grade:'C',conf:0.709,price:-2.6,loan:15, rec:'Standard +15bps'},
+  {rank:17,ward:'Rajajinagar',   physical:40.9,exposure:54.4,financial:19.8,crcs:39.7,grade:'B',conf:0.709,price:-2.2,loan:15, rec:'Drainage adequate; monitor'},
+  {rank:18,ward:'Hebbal',        physical:43.2,exposure:46.9,financial:21.2,crcs:38.8,grade:'B',conf:0.709,price:-2.1,loan:15, rec:'No restriction'},
+  {rank:19,ward:'JP Nagar',      physical:39.2,exposure:50.9,financial:19.4,crcs:37.8,grade:'B',conf:0.709,price:-1.9,loan:15, rec:'No restriction'},
+  {rank:20,ward:'Vijayanagar',   physical:38.6,exposure:51.2,financial:18.4,crcs:37.3,grade:'B',conf:0.709,price:-1.9,loan:15, rec:'No restriction'},
+  {rank:21,ward:'Jayanagar',     physical:36.1,exposure:50.5,financial:17.5,crcs:35.8,grade:'B',conf:0.709,price:-1.7,loan:15, rec:'Good historical resilience'},
+  {rank:22,ward:'Basavanagudi',  physical:34.1,exposure:48.6,financial:16.7,crcs:34.1,grade:'B',conf:0.709,price:-1.5,loan:15, rec:'No flags'},
+  {rank:23,ward:'Malleswaram',   physical:30.4,exposure:47.2,financial:15.0,crcs:31.6,grade:'B',conf:0.709,price:-1.2,loan:15, rec:'Safer zone'},
+  {rank:24,ward:'Yelahanka',     physical:26.1,exposure:35.2,financial:12.9,crcs:25.5,grade:'A',conf:0.709,price:-0.4,loan:0,  rec:'Green loan eligible'},
+  {rank:25,ward:'Kengeri',       physical:22.7,exposure:32.5,financial:11.5,crcs:22.8,grade:'A',conf:0.709,price:-0.1,loan:0,  rec:'Lowest risk — green loan'},
 ];
 
-const SCENARIOS = [
-  {name:'Base Case',crcs:60.6,delta:0,grade:'D',annualLoan:'₹58,850',tenYr:'₹5.89 L',propVal:'-4.7%',insur:'+28%',note:'Current state. Flood insurance rider mandatory.'},
-  {name:'+20% Monsoon Rainfall',crcs:66.2,delta:5.6,grade:'D',annualLoan:'₹58,850',tenYr:'₹5.89 L',propVal:'-5.4%',insur:'+28%',note:'Elevated flood sub-score. Approach monsoon season with caution.'},
-  {name:'+2°C UHI Increase',crcs:65.2,delta:4.6,grade:'D',annualLoan:'₹58,850',tenYr:'₹5.89 L',propVal:'-5.2%',insur:'+28%',note:'Cool roof specification recommended. Energy costs rise significantly.'},
-  {name:'+30% GW Depletion',crcs:62.1,delta:1.5,grade:'D',annualLoan:'₹58,850',tenYr:'₹5.89 L',propVal:'-4.9%',insur:'+28%',note:'Verify BWSSB pipeline supply. Tanker dependency increases.'},
-  {name:'Combined Climate Shock',crcs:72.2,delta:11.6,grade:'E',annualLoan:'₹1.29 L',tenYr:'₹12.9 L',propVal:'-6.1%',insur:'+42%',note:'All three stressors simultaneously. Consider alternative location.'},
-  {name:'Resilience Investment',crcs:56.6,delta:-4.0,grade:'C',annualLoan:'₹16,050',tenYr:'₹1.61 L',propVal:'-4.2%',insur:'+14%',note:'₹8–12L flood-proofing + RWH. Saves ₹4.97L over 10 years. NPV positive.'},
-];
-
-// Ward data for map clicks
-const WARD_DETAILS = {
-  'Bellandur': {zone:'South-East Zone',crcs:60.6,grade:'D',ci:'59.0–62.2',flood:91,uhi:72,water:88,exposure:66,financial:38,lakes:'Bellandur Lake, Varthur Lake',drainage:'Severely congested — nala encroachment',historical:'Flooded: 2015, 2017, 2022 (BBMP records + ISRO)',monsoon:'VERY HIGH — lake overflow risk',priceImpact:'-4.7% vs low-risk comparable',insurance:'+28% premium loading',ltv:'75% LTV cap'},
-  'Whitefield': {zone:'East Zone',crcs:44.2,grade:'C',ci:'42.6–45.9',flood:58,uhi:68,water:90,exposure:51,financial:25,lakes:'Hoodi Lake',drainage:'Moderate — rapid urbanisation',historical:'Flooded: 2018 (localised)',monsoon:'MODERATE — rising water stress',priceImpact:'-2.7% vs comparable',insurance:'+14% loading',ltv:'85% LTV cap'},
-  'Koramangala': {zone:'South Zone',crcs:55.8,grade:'C',ci:'54.2–57.4',flood:76,uhi:59,water:48,exposure:66,financial:31,lakes:'Koramangala Kere (filled)',drainage:'Congested — former tank bed',historical:'Flooded: 2019, 2022',monsoon:'HIGH — filled tank bed risk',priceImpact:'-4.1% vs comparable',insurance:'+14% loading',ltv:'85% LTV cap'},
-  'Indiranagar': {zone:'East Zone',crcs:46.0,grade:'C',ci:'44.4–47.7',flood:44,uhi:74,water:38,exposure:60,financial:25,lakes:'Ulsoor Lake (nearby)',drainage:'Adequate — good roads',historical:'No major events',monsoon:'MODERATE — UHI primary risk',priceImpact:'-2.9% vs comparable',insurance:'+14% loading',ltv:'85% LTV cap'},
-  'HSR Layout': {zone:'South Zone',crcs:52.6,grade:'C',ci:'51.0–54.1',flood:58,uhi:61,water:48,exposure:62,financial:31,lakes:'Agara Lake',drainage:'Moderate — backtest FN 2022',historical:'Flooded: 2022 (backtest FN)',monsoon:'MODERATE-HIGH — IoT upgrade needed',priceImpact:'-3.7% vs comparable',insurance:'+14% loading',ltv:'85% LTV cap'},
-  'Majestic': {zone:'Central Zone',crcs:69.5,grade:'D',ci:'67.9–71.2',flood:72,uhi:86,water:45,exposure:86,financial:45,lakes:'None — concrete dense',drainage:'Old infrastructure — 1950s-era',historical:'Flooded: 2019, 2021, 2022',monsoon:'VERY HIGH — density + old drains',priceImpact:'-5.8% vs comparable',insurance:'+28% loading',ltv:'75% LTV cap'},
-  'Yelahanka': {zone:'North Zone',crcs:25.5,grade:'A',ci:'23.9–27.2',flood:26,uhi:35,water:26,exposure:35,financial:13,lakes:'Yelahanka Lake',drainage:'Good — newer infrastructure',historical:'No significant events',monsoon:'LOW — relatively elevated terrain',priceImpact:'-0.4% vs comparable',insurance:'+5% loading',ltv:'90% LTV — Green loan eligible'},
-  'JP Nagar': {zone:'South Zone',crcs:37.8,grade:'B',ci:'36.0–39.4',flood:39,uhi:51,water:32,exposure:51,financial:19,lakes:'Puttenahalli Lake',drainage:'Moderate — good BBMP maintenance',historical:'Minor flooding only',monsoon:'LOW-MODERATE — manageable',priceImpact:'-1.9% vs comparable',insurance:'+14% loading',ltv:'85% LTV cap'},
+const WARD_DETAIL = {
+  'Bellandur':   {zone:'South-East Zone',crcs:60.6,grade:'D',ci:'59.0–62.2',flood:91,uhi:72,water:88,expo:66,fin:38,price:'-4.7%',ins:'+28%',ltv:'75% LTV cap',monsoon:'Very high — lake overflow',trust:'Validated against 2015, 2017, 2022 Bellandur lake overflow. DEM confirms chronic inundation pattern.'},
+  'Whitefield':  {zone:'East Zone',crcs:44.2,grade:'C',ci:'42.6–45.9',flood:58,uhi:68,water:90,expo:51,fin:25,price:'-2.7%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Moderate — rising water stress',trust:'CGWB 2023 confirms depletion. GRACE anomaly shows 18cm subsidence since 2010.'},
+  'Koramangala': {zone:'South Zone',crcs:55.8,grade:'C',ci:'54.2–57.4',flood:76,uhi:59,water:48,expo:66,fin:31,price:'-4.1%',ins:'+14%',ltv:'85% LTV cap',monsoon:'High — filled tank bed risk',trust:'Lies on filled Koramangala kere. DEM shows 2.1m below surrounding roads.'},
+  'Indiranagar': {zone:'East Zone',crcs:46.0,grade:'C',ci:'44.4–47.7',flood:44,uhi:74,water:38,expo:60,fin:25,price:'-2.9%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Moderate — UHI primary risk',trust:'Landsat LST shows 3.2°C above Cubbon Park baseline. No major flood record.'},
+  'HSR Layout':  {zone:'South Zone',crcs:52.6,grade:'C',ci:'51.0–54.1',flood:58,uhi:61,water:48,expo:62,fin:31,price:'-3.7%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Moderate-high — IoT needed',trust:'Backtest false negative 2022. Root cause: localised drain blockages not visible to satellite.'},
+  'Majestic':    {zone:'Central Zone',crcs:69.5,grade:'D',ci:'67.9–71.2',flood:72,uhi:86,water:45,expo:86,fin:45,price:'-5.8%',ins:'+28%',ltv:'75% LTV cap',monsoon:'Very high — old drainage',trust:'Highest CRCS in dataset. 1950s drainage. Flooded 2019, 2021, 2022 per BBMP records.'},
+  'Yelahanka':   {zone:'North Zone',crcs:25.5,grade:'A',ci:'23.9–27.2',flood:26,uhi:35,water:26,expo:35,fin:13,price:'-0.4%',ins:'+5%',ltv:'90% — green loan eligible',monsoon:'Low — elevated terrain',trust:'Reference baseline. Newer infrastructure. NDVI above ward median. 5-year IMD validated.'},
+  'JP Nagar':    {zone:'South Zone',crcs:37.8,grade:'B',ci:'36.0–39.4',flood:39,uhi:51,water:32,expo:51,fin:19,price:'-1.9%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Low-moderate — manageable',trust:'Good BBMP maintenance records. Puttenahalli Lake managed. Minor flooding only.'},
 };
 
-// ── HERO CANVAS ──────────────────────────────────────────────────────────
-const heroCanvas = document.getElementById('heroCanvas');
-const hctx = heroCanvas.getContext('2d');
-let W,H;
-function resizeCanvas(){
-  W = heroCanvas.width = heroCanvas.offsetWidth;
-  H = heroCanvas.height = heroCanvas.offsetHeight;
+const GRADE_COLORS = {
+  A:{bg:'#ebf5ec',txt:'#2a6830'},B:{bg:'#e2f2ee',txt:'#0a6655'},
+  C:{bg:'#fdf2d8',txt:'#8a5c00'},D:{bg:'#fdf3ec',txt:'#8a3800'},E:{bg:'#fceaea',txt:'#922020'}
+};
+
+function scoreColor(s){
+  return s<=25?'#2a6830':s<=40?'#0a6655':s<=55?'#8a5c00':s<=70?'#8a3800':'#922020';
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-const particles = Array.from({length:80},()=>({
-  x:Math.random()*2000,y:Math.random()*1000,
-  vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,
-  size:Math.random()*2+0.5,alpha:Math.random()*0.6+0.2
-}));
+// ── MAP ───────────────────────────────────────────────────────────────────
+const mc = document.getElementById('mapCanvas');
+const ctx = mc.getContext('2d');
+let curLayer = 'composite', hoveredW = null, selectedW = null;
 
-const pulses = [{x:600,y:300,r:0,maxR:150,alpha:0.6,color:'rgba(0,229,200,'},{x:900,y:200,r:50,maxR:200,alpha:0.4,color:'rgba(255,107,53,'},{x:400,y:500,r:100,maxR:180,alpha:0.5,color:'rgba(0,212,255,'}];
-
-function drawHero(){
-  hctx.clearRect(0,0,W,H);
-  // Gradient bg
-  const grad = hctx.createRadialGradient(W*0.3,H*0.4,0,W*0.3,H*0.4,W*0.6);
-  grad.addColorStop(0,'rgba(0,229,200,0.04)');
-  grad.addColorStop(1,'transparent');
-  hctx.fillStyle=grad; hctx.fillRect(0,0,W,H);
-
-  // Particles
-  particles.forEach(p=>{
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
-    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
-    hctx.beginPath();
-    hctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    hctx.fillStyle=`rgba(0,229,200,${p.alpha})`;
-    hctx.fill();
-  });
-
-  // Connect close particles
-  for(let i=0;i<particles.length;i++){
-    for(let j=i+1;j<particles.length;j++){
-      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<100){
-        hctx.beginPath();
-        hctx.moveTo(particles[i].x,particles[i].y);
-        hctx.lineTo(particles[j].x,particles[j].y);
-        hctx.strokeStyle=`rgba(0,229,200,${0.08*(1-dist/100)})`;
-        hctx.lineWidth=0.5;
-        hctx.stroke();
-      }
-    }
-  }
-
-  // Pulses
-  pulses.forEach(p=>{
-    p.r+=0.8; if(p.r>p.maxR){p.r=0;p.alpha=0.6;}
-    p.alpha-=0.003;
-    hctx.beginPath();
-    hctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    hctx.strokeStyle=p.color+Math.max(0,p.alpha)+')';
-    hctx.lineWidth=1.5;
-    hctx.stroke();
-  });
-
-  requestAnimationFrame(drawHero);
-}
-drawHero();
-
-// ── MAP CANVAS ───────────────────────────────────────────────────────────
-const mapCanvas = document.getElementById('mapCanvas');
-const mctx = mapCanvas.getContext('2d');
-let currentLayer = 'composite';
-let hoveredWard = null;
-let selectedWard = null;
-
-// Ward positions and shapes (simplified polygon-like ward representations)
-const mapWards = [
-  {name:'Yelahanka',   x:0.30,y:0.10,rx:0.08,ry:0.07},
-  {name:'Hebbal',      x:0.38,y:0.20,rx:0.07,ry:0.06},
-  {name:'RT Nagar',    x:0.48,y:0.22,rx:0.07,ry:0.06},
-  {name:'Rajajinagar', x:0.22,y:0.30,rx:0.08,ry:0.06},
-  {name:'Malleswaram', x:0.32,y:0.32,rx:0.07,ry:0.06},
-  {name:'Shivajinagar',x:0.44,y:0.30,rx:0.08,ry:0.06},
-  {name:'Majestic',    x:0.38,y:0.40,rx:0.07,ry:0.06},
-  {name:'Indiranagar', x:0.58,y:0.32,rx:0.07,ry:0.06},
-  {name:'CV Raman Nagar',x:0.66,y:0.28,rx:0.08,ry:0.06},
-  {name:'Vijayanagar', x:0.22,y:0.44,rx:0.08,ry:0.06},
-  {name:'Basavanagudi',x:0.34,y:0.52,rx:0.08,ry:0.06},
-  {name:'JP Nagar',    x:0.28,y:0.62,rx:0.08,ry:0.07},
-  {name:'Jayanagar',   x:0.42,y:0.54,rx:0.07,ry:0.06},
-  {name:'Koramangala', x:0.52,y:0.46,rx:0.08,ry:0.06},
-  {name:'HSR Layout',  x:0.48,y:0.60,rx:0.08,ry:0.07},
-  {name:'BTM Layout',  x:0.40,y:0.66,rx:0.08,ry:0.07},
-  {name:'Bommanahalli',x:0.52,y:0.72,rx:0.08,ry:0.07},
-  {name:'Domlur',      x:0.62,y:0.44,rx:0.07,ry:0.06},
-  {name:'Whitefield',  x:0.76,y:0.40,rx:0.09,ry:0.07},
-  {name:'KR Puram',    x:0.70,y:0.36,rx:0.07,ry:0.06},
-  {name:'Marathahalli',x:0.68,y:0.52,rx:0.09,ry:0.07},
-  {name:'Electronic City',x:0.58,y:0.78,rx:0.09,ry:0.07},
-  {name:'Bannerghatta Rd',x:0.42,y:0.80,rx:0.09,ry:0.07},
-  {name:'Bellandur',   x:0.64,y:0.64,rx:0.09,ry:0.08},
-  {name:'Kengeri',     x:0.14,y:0.60,rx:0.08,ry:0.07},
+const MAP_NODES = [
+  {n:'Yelahanka',x:.30,y:.10,rx:.080,ry:.065},{n:'Hebbal',x:.38,y:.20,rx:.070,ry:.060},
+  {n:'RT Nagar',x:.48,y:.22,rx:.070,ry:.060},{n:'Rajajinagar',x:.22,y:.30,rx:.080,ry:.060},
+  {n:'Malleswaram',x:.32,y:.32,rx:.070,ry:.060},{n:'Shivajinagar',x:.44,y:.30,rx:.080,ry:.060},
+  {n:'Majestic',x:.38,y:.40,rx:.070,ry:.060},{n:'Indiranagar',x:.58,y:.32,rx:.070,ry:.060},
+  {n:'CV Raman Nagar',x:.67,y:.28,rx:.085,ry:.060},{n:'Vijayanagar',x:.22,y:.44,rx:.080,ry:.060},
+  {n:'Basavanagudi',x:.34,y:.52,rx:.080,ry:.060},{n:'JP Nagar',x:.28,y:.62,rx:.080,ry:.068},
+  {n:'Jayanagar',x:.42,y:.54,rx:.070,ry:.060},{n:'Koramangala',x:.52,y:.46,rx:.080,ry:.060},
+  {n:'HSR Layout',x:.48,y:.60,rx:.080,ry:.068},{n:'BTM Layout',x:.40,y:.66,rx:.080,ry:.068},
+  {n:'Bommanahalli',x:.52,y:.72,rx:.082,ry:.068},{n:'Domlur',x:.62,y:.44,rx:.070,ry:.060},
+  {n:'Whitefield',x:.76,y:.40,rx:.090,ry:.068},{n:'KR Puram',x:.70,y:.35,rx:.072,ry:.060},
+  {n:'Marathahalli',x:.68,y:.52,rx:.090,ry:.068},{n:'Electronic City',x:.58,y:.79,rx:.092,ry:.070},
+  {n:'Bannerghatta Rd',x:.42,y:.80,rx:.092,ry:.070},{n:'Bellandur',x:.64,y:.64,rx:.092,ry:.080},
+  {n:'Kengeri',x:.13,y:.60,rx:.082,ry:.068},
 ];
 
-function crcsColor(score, alpha=1){
-  if(score<=25) return `rgba(0,230,118,${alpha})`;
-  if(score<=40) return `rgba(0,229,200,${alpha})`;
-  if(score<=55) return `rgba(255,182,39,${alpha})`;
-  if(score<=70) return `rgba(255,107,53,${alpha})`;
-  return `rgba(255,45,85,${alpha})`;
-}
-
-function getScore(wardName, layer){
-  const w = WARDS.find(x=>x.ward===wardName);
-  if(!w) return 50;
+function getScore(name, layer){
+  const w = WARDS.find(x=>x.ward===name);
+  if(!w) return 45;
   if(layer==='composite') return w.crcs;
-  if(layer==='flood') return w.physical;
-  if(layer==='uhi') return w.physical * 0.8 + 10;
-  if(layer==='water') return w.physical * 0.6 + w.financial * 0.4;
-  if(layer==='financial') return w.financial * 2;
+  if(layer==='flood')    return Math.min(100, w.physical*1.1);
+  if(layer==='uhi')      return Math.min(100, w.physical*0.85+8);
+  if(layer==='water')    return Math.min(100, w.physical*0.55+w.financial*1.1);
+  if(layer==='financial')return Math.min(100, w.financial*2.1);
   return w.crcs;
 }
 
+function hexRgba(col, a){
+  const hex=col.replace('#','');
+  const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
 function drawMap(){
-  const cw = mapCanvas.width, ch = mapCanvas.height;
-
-  // Background
-  mctx.fillStyle='#070d14'; mctx.fillRect(0,0,cw,ch);
-
-  // Grid lines
-  mctx.strokeStyle='rgba(0,229,200,0.04)'; mctx.lineWidth=1;
-  for(let x=0;x<cw;x+=40){mctx.beginPath();mctx.moveTo(x,0);mctx.lineTo(x,ch);mctx.stroke();}
-  for(let y=0;y<ch;y+=40){mctx.beginPath();mctx.moveTo(0,y);mctx.lineTo(cw,y);mctx.stroke();}
-
-  // Draw wards as ellipses
-  mapWards.forEach(ward=>{
-    const score = getScore(ward.name, currentLayer);
-    const wx = ward.x * cw, wy = ward.y * ch;
-    const wrx = ward.rx * cw, wry = ward.ry * ch;
-    const isHovered = hoveredWard===ward.name;
-    const isSelected = selectedWard===ward.name;
-
-    // Glow
-    if(score>55 || isSelected){
-      mctx.save();
-      mctx.shadowColor = crcsColor(score);
-      mctx.shadowBlur = isSelected ? 30 : (score>70?20:10);
-      mctx.beginPath();
-      mctx.ellipse(wx,wy,wrx,wry,0,0,Math.PI*2);
-      mctx.fillStyle = crcsColor(score, 0.15);
-      mctx.fill();
-      mctx.restore();
-    }
-
-    // Fill
-    mctx.beginPath();
-    mctx.ellipse(wx,wy,wrx,wry,0,0,Math.PI*2);
-    mctx.fillStyle = crcsColor(score, isHovered||isSelected ? 0.75 : 0.55);
-    mctx.fill();
-
-    // Border
-    mctx.strokeStyle = isSelected ? crcsColor(score) : crcsColor(score, 0.7);
-    mctx.lineWidth = isSelected ? 2.5 : (isHovered ? 2 : 1);
-    mctx.stroke();
-
-    // Label
-    mctx.fillStyle = isHovered||isSelected ? '#fff' : 'rgba(255,255,255,0.75)';
-    mctx.font = isSelected ? '600 10px Syne' : '500 9px Syne';
-    mctx.textAlign = 'center';
-    mctx.fillText(ward.name.length>10 ? ward.name.split(' ')[0] : ward.name, wx, wy-3);
-    mctx.font = '500 10px IBM Plex Mono';
-    mctx.fillStyle = crcsColor(score);
-    mctx.fillText(score.toFixed(1), wx, wy+8);
+  const W=mc.width, H=mc.height;
+  // warm sand bg
+  ctx.fillStyle='#eeeae2'; ctx.fillRect(0,0,W,H);
+  // faint grid
+  ctx.strokeStyle='rgba(28,28,26,0.05)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // waterways (decorative)
+  ctx.strokeStyle='rgba(74,170,150,0.18)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(W*.58,H*.65); ctx.bezierCurveTo(W*.62,H*.72,W*.64,H*.76,W*.60,H*.80); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W*.30,H*.62); ctx.bezierCurveTo(W*.26,H*.66,W*.24,H*.70,W*.28,H*.76); ctx.stroke();
+  // draw nodes
+  MAP_NODES.forEach(nd => {
+    const sc = getScore(nd.n, curLayer);
+    const col = scoreColor(sc);
+    const wx = nd.x*W, wy = nd.y*H, rx = nd.rx*W, ry = nd.ry*H;
+    const isSel = selectedW===nd.n, isHov = hoveredW===nd.n;
+    // fill
+    ctx.beginPath(); ctx.ellipse(wx,wy,rx,ry,0,0,Math.PI*2);
+    ctx.fillStyle = hexRgba(col, isSel?0.88:isHov?0.72:0.52);
+    ctx.fill();
+    // border
+    ctx.strokeStyle = hexRgba(col, isSel?1:isHov?0.85:0.65);
+    ctx.lineWidth = isSel?2.2:isHov?1.6:0.9;
+    ctx.stroke();
+    // text
+    ctx.textAlign='center';
+    ctx.fillStyle = isSel||isHov ? '#1c1c1a' : 'rgba(28,28,26,0.75)';
+    ctx.font = `${isSel?'500':'400'} 9px "DM Sans",sans-serif`;
+    const short = nd.n.length>11 ? nd.n.split(' ')[0] : nd.n;
+    ctx.fillText(short, wx, wy-3);
+    ctx.font = '500 10px "DM Mono",monospace';
+    ctx.fillStyle = col;
+    ctx.fillText(sc.toFixed(1), wx, wy+9);
   });
 }
 
-function resizeMapCanvas(){
-  const container = mapCanvas.parentElement;
-  mapCanvas.width = container.offsetWidth;
-  mapCanvas.height = container.offsetHeight;
+function resizeMap(){
+  mc.width  = mc.parentElement.offsetWidth;
+  mc.height = mc.parentElement.offsetHeight;
   drawMap();
 }
-resizeMapCanvas();
-window.addEventListener('resize', resizeMapCanvas);
+resizeMap();
+window.addEventListener('resize', resizeMap);
 
-mapCanvas.addEventListener('mousemove', e=>{
-  const rect = mapCanvas.getBoundingClientRect();
-  const mx = (e.clientX-rect.left)*(mapCanvas.width/rect.width);
-  const my = (e.clientY-rect.top)*(mapCanvas.height/rect.height);
+mc.addEventListener('mousemove', e => {
+  const r = mc.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(mc.width/r.width), my=(e.clientY-r.top)*(mc.height/r.height);
   let found=null;
-  mapWards.forEach(ward=>{
-    const wx=ward.x*mapCanvas.width, wy=ward.y*mapCanvas.height;
-    const wrx=ward.rx*mapCanvas.width, wry=ward.ry*mapCanvas.height;
-    const dx=(mx-wx)/wrx, dy=(my-wy)/wry;
-    if(dx*dx+dy*dy<=1) found=ward.name;
+  MAP_NODES.forEach(nd=>{
+    const dx=(mx-nd.x*mc.width)/(nd.rx*mc.width), dy=(my-nd.y*mc.height)/(nd.ry*mc.height);
+    if(dx*dx+dy*dy<=1) found=nd.n;
   });
-  if(found!==hoveredWard){hoveredWard=found; mapCanvas.style.cursor=found?'pointer':'default'; drawMap();}
+  if(found!==hoveredW){hoveredW=found; mc.style.cursor=found?'pointer':'default'; drawMap();}
 });
 
-mapCanvas.addEventListener('click', e=>{
-  const rect = mapCanvas.getBoundingClientRect();
-  const mx = (e.clientX-rect.left)*(mapCanvas.width/rect.width);
-  const my = (e.clientY-rect.top)*(mapCanvas.height/rect.height);
-  mapWards.forEach(ward=>{
-    const wx=ward.x*mapCanvas.width, wy=ward.y*mapCanvas.height;
-    const wrx=ward.rx*mapCanvas.width, wry=ward.ry*mapCanvas.height;
-    const dx=(mx-wx)/wrx, dy=(my-wy)/wry;
-    if(dx*dx+dy*dy<=1){selectedWard=ward.name; showWardPanel(ward.name); drawMap();}
+mc.addEventListener('click', e=>{
+  const r=mc.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(mc.width/r.width), my=(e.clientY-r.top)*(mc.height/r.height);
+  MAP_NODES.forEach(nd=>{
+    const dx=(mx-nd.x*mc.width)/(nd.rx*mc.width), dy=(my-nd.y*mc.height)/(nd.ry*mc.height);
+    if(dx*dx+dy*dy<=1){ selectedW=nd.n; drawMap(); showWardPanel(nd.n); }
   });
 });
 
-function setLayer(layer){
-  currentLayer=layer;
-  document.querySelectorAll('.map-filter').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
+function setLayer(layer, btn){
+  curLayer=layer;
+  document.querySelectorAll('.lp').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
   drawMap();
 }
 
-function showWardPanel(wardName){
-  const d = WARD_DETAILS[wardName];
-  const w = WARDS.find(x=>x.ward===wardName);
-  if(!d||!w){
-    // fallback
-    const score = getScore(wardName,'composite');
-    const grade = score<=25?'A':score<=40?'B':score<=55?'C':score<=70?'D':'E';
-    document.getElementById('sidebarEmpty').style.display='none';
-    document.getElementById('wardPanel').className='ward-panel active';
-    document.getElementById('wardPanel').innerHTML=`
-      <div class="wp-header">
-        <div class="wp-name">${wardName}</div>
-        <div class="wp-zone">Bengaluru Ward</div>
-      </div>
-      <div class="wp-score-row">
-        <div class="wp-score-circle"><div class="wp-score-num">${score.toFixed(1)}</div><div class="wp-score-label">CRCS</div></div>
-        <div class="wp-grade-badge" style="background:${gradeStyle(grade).bg};color:${gradeStyle(grade).fg}">${grade}</div>
-      </div>
-      <p style="font-size:12px;color:var(--text2);font-family:var(--font-mono)">Full data available for: Bellandur, Whitefield, Koramangala, Indiranagar, HSR Layout, Majestic, Yelahanka, JP Nagar</p>`;
-    return;
-  }
-
-  document.getElementById('sidebarEmpty').style.display='none';
-  document.getElementById('wardPanel').className='ward-panel active';
-
-  const bars = [
-    {label:'Flood Risk',val:d.flood,color:'#1a6bff'},
-    {label:'UHI Intensity',val:d.uhi,color:'#ff6b35'},
-    {label:'Water Stress',val:d.water,color:'#00e5c8'},
-    {label:'Exposure Risk',val:d.exposure,color:'#ffb627'},
-    {label:'Financial Risk',val:d.financial*2,color:'#9b59ff'},
+function showWardPanel(name){
+  document.getElementById('sbEmpty').style.display='none';
+  const sc=document.getElementById('sbContent');
+  sc.classList.add('show');
+  const d=WARD_DETAIL[name];
+  const w=WARDS.find(x=>x.ward===name);
+  if(!w){ sc.innerHTML=`<div class="sb-ward">${name}</div><div class="sb-zone">Bengaluru ward</div><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3);margin-top:16px">Full scorecard available for 8 key wards</p>`; return; }
+  const gc=GRADE_COLORS[w.grade]||GRADE_COLORS['C'];
+  const detail=d||{zone:'Bengaluru ward',crcs:w.crcs,grade:w.grade,ci:'—',flood:w.physical,uhi:Math.round(w.physical*.85),water:Math.round(w.physical*.6),expo:w.exposure,fin:w.financial,price:w.price+'%',ins:w.loan?'+28%':'+5%',ltv:w.loan?'85% LTV cap':'90% LTV',monsoon:'Moderate',trust:'Satellite data: ISRO Bhuvan + MODIS LST. Confidence-adjusted scoring (0.709).'};
+  const bars=[
+    {n:'Flood risk',v:detail.flood,c:'#1a4e8a'},
+    {n:'Heat island',v:detail.uhi, c:'#8a5c00'},
+    {n:'Water stress',v:detail.water,c:'#0a6655'},
+    {n:'Exposure',   v:detail.expo, c:'#8a3800'},
+    {n:'Financial',  v:Math.min(100,detail.fin*2),c:'#5a2d80'},
   ];
-  const gs = gradeStyle(d.grade);
-
-  document.getElementById('wardPanel').innerHTML=`
-    <div class="wp-header">
-      <div class="wp-name">${wardName}</div>
-      <div class="wp-zone">${d.zone}</div>
-    </div>
-    <div class="wp-score-row">
-      <div class="wp-score-circle" style="border-color:${gs.fg}">
-        <div class="wp-score-num" style="color:${gs.fg}">${d.crcs}</div>
-        <div class="wp-score-label">CRCS</div>
-      </div>
+  sc.innerHTML=`
+    <div class="sb-ward">${name}</div>
+    <div class="sb-zone">${detail.zone}</div>
+    <div class="sb-score-row">
+      <div class="sb-big">${detail.crcs}</div>
       <div>
-        <div class="wp-grade-badge" style="background:${gs.bg};color:${gs.fg};font-size:28px;padding:8px 20px;border-radius:4px">${d.grade}</div>
-        <div class="wp-ci" style="margin-top:8px">CI: <span>${d.ci}</span></div>
+        <div class="sb-grade" style="background:${gc.bg};color:${gc.txt}">${detail.grade}</div>
+        <div class="sb-ci">CI&nbsp;${detail.ci}</div>
       </div>
     </div>
-    <div class="sub-bars">
-      ${bars.map(b=>`
-        <div class="sub-bar-row">
-          <div class="sb-label">
-            <span class="sb-label-name">${b.label}</span>
-            <span class="sb-label-val">${b.val}</span>
-          </div>
-          <div class="sb-track"><div class="sb-fill" style="width:${b.val}%;background:${b.color}"></div></div>
-        </div>`).join('')}
+    <div class="sb-bars">${bars.map(b=>`
+      <div class="sb-bar">
+        <div class="sb-brow"><span class="sb-blabel">${b.n}</span><span class="sb-bval">${b.v}</span></div>
+        <div class="sb-track"><div class="sb-fill" style="width:0%;background:${b.c}" data-w="${b.v}"></div></div>
+      </div>`).join('')}</div>
+    <div class="sb-chips">
+      <div class="sb-chip"><div class="sc-lbl">PRICE IMPACT</div><div class="sc-val" style="color:var(--orange)">${detail.price}</div></div>
+      <div class="sb-chip"><div class="sc-lbl">INSURANCE ADJ.</div><div class="sc-val" style="color:var(--orange)">${detail.ins}</div></div>
+      <div class="sb-chip"><div class="sc-lbl">LTV CAP</div><div class="sc-val" style="color:var(--teal)">${detail.ltv}</div></div>
+      <div class="sb-chip"><div class="sc-lbl">MONSOON RISK</div><div class="sc-val" style="font-size:12px">${detail.monsoon}</div></div>
     </div>
-    <div class="wp-fin">
-      <div class="fin-card"><div class="fin-card-label">PRICE IMPACT</div><div class="fin-card-val">${d.priceImpact}</div></div>
-      <div class="fin-card"><div class="fin-card-label">INSURANCE ADJ.</div><div class="fin-card-val">${d.insurance}</div></div>
-      <div class="fin-card"><div class="fin-card-label">LTV CAP</div><div class="fin-card-val" style="color:var(--teal)">${d.ltv}</div></div>
-      <div class="fin-card"><div class="fin-card-label">MONSOON RISK</div><div class="fin-card-val" style="font-size:11px">${d.monsoon}</div></div>
-    </div>
-    <div class="trust-box">
-      <div class="trust-title">WHY TRUST THIS SCORE?</div>
-      <div class="trust-item">Satellite data: ISRO Bhuvan flood layer + MODIS LST</div>
-      <div class="trust-item">2022 Bengaluru flood event validation</div>
-      <div class="trust-item">BBMP drainage records + CGWB groundwater</div>
-      <div class="trust-item">Confidence-adjusted scoring (factor: 0.709)</div>
-      <div class="trust-item">Monte Carlo CI: ${d.ci}</div>
+    <div class="sb-trust">
+      <div class="t-head">WHY TRUST THIS SCORE?</div>
+      <p>${detail.trust}</p>
+      <p>ISRO Bhuvan + MODIS satellite validation</p>
+      <p>Confidence-adjusted (factor: 0.709)</p>
+      <p>Monte Carlo CI: ${detail.ci}</p>
     </div>`;
+  setTimeout(()=>{
+    sc.querySelectorAll('.sb-fill').forEach(el=>{
+      const w=el.dataset.w;
+      el.style.width='0';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.width=w+'%'; }));
+    });
+  },60);
 }
 
-function gradeStyle(g){
-  const map={A:{bg:'rgba(0,230,118,0.15)',fg:'#00e676'},B:{bg:'rgba(0,229,200,0.15)',fg:'#00e5c8'},C:{bg:'rgba(255,182,39,0.15)',fg:'#ffb627'},D:{bg:'rgba(255,107,53,0.15)',fg:'#ff6b35'},E:{bg:'rgba(255,45,85,0.15)',fg:'#ff2d55'}};
-  return map[g]||map['C'];
-}
+// ── CHARTS ────────────────────────────────────────────────────────────────
+const CP = { grid:'rgba(28,28,26,.07)', tick:'#9c9c8e', font:{family:"'DM Mono',monospace",size:10} };
 
-// ── CHARTS ───────────────────────────────────────────────────────────────
-const chartDefaults = {
-  color:'rgba(0,229,200,0.8)',
-  gridColor:'rgba(0,229,200,0.06)',
-  tickColor:'rgba(122,155,181,0.8)',
-  font:{family:"'IBM Plex Mono', monospace",size:10}
-};
-
-// Distribution chart
+// 1. Distribution
+const sorted = [...WARDS].sort((a,b)=>b.crcs-a.crcs);
 new Chart(document.getElementById('distChart'),{
   type:'bar',
   data:{
-    labels:WARDS.sort((a,b)=>b.crcs-a.crcs).map(w=>w.ward.split(' ')[0]),
+    labels: sorted.map(w=>w.ward.split(' ')[0]),
     datasets:[{
-      label:'CRCS Score',
-      data:WARDS.sort((a,b)=>b.crcs-a.crcs).map(w=>w.crcs),
-      backgroundColor:WARDS.sort((a,b)=>b.crcs-a.crcs).map(w=>crcsColor(w.crcs,0.7)),
-      borderColor:WARDS.sort((a,b)=>b.crcs-a.crcs).map(w=>crcsColor(w.crcs)),
-      borderWidth:1,borderRadius:2
+      data: sorted.map(w=>w.crcs),
+      backgroundColor: sorted.map(w=>hexRgba(scoreColor(w.crcs),.62)),
+      borderColor: sorted.map(w=>scoreColor(w.crcs)),
+      borderWidth:1, borderRadius:3
     }]
   },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const w=sorted[c.dataIndex];return ` ${w.ward}: ${w.crcs} (${w.grade})`;}}}},
     scales:{
-      x:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor}},
-      y:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor},min:0,max:100}
+      x:{ticks:{color:CP.tick,font:CP.font,maxRotation:45},grid:{color:CP.grid}},
+      y:{min:0,max:100,ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid}}
     }
   }
 });
 
-// Monsoon chart
-const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// 2. Monsoon
 new Chart(document.getElementById('monsoonChart'),{
   type:'line',
   data:{
-    labels:months,
+    labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     datasets:[{
-      label:'Flood Probability %',
-      data:[5,5,8,10,20,55,85,92,80,45,15,8],
-      borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.1)',
-      borderWidth:2,fill:true,tension:0.4,pointRadius:3,
-      pointBackgroundColor:'#ff6b35'
+      label:'Flood probability %',
+      data:[5,5,8,10,20,55,85,92,78,42,14,7],
+      borderColor:'#8a3800', backgroundColor:'rgba(138,56,0,.08)',
+      borderWidth:2, fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'#8a3800'
     }]
   },
-  options:{
-    responsive:true,maintainAspectRatio:false,
+  options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
     scales:{
-      x:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor}},
-      y:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor},min:0,max:100}
+      x:{ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid}},
+      y:{min:0,max:100,ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid}}
     }
   }
 });
 
-// Radar chart
+// 3. Radar
 new Chart(document.getElementById('radarChart'),{
   type:'radar',
   data:{
     labels:['Flood','Heat','Water','Exposure','Financial'],
-    datasets:[{
-      label:'Bellandur',
-      data:[91,72,88,66,38],
-      borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.15)',
-      borderWidth:2,pointBackgroundColor:'#ff6b35',pointRadius:4
-    },{
-      label:'City Average',
-      data:[52,55,48,57,26],
-      borderColor:'#00e5c8',backgroundColor:'rgba(0,229,200,0.08)',
-      borderWidth:1.5,pointBackgroundColor:'#00e5c8',pointRadius:3
-    }]
+    datasets:[
+      {label:'Bellandur',data:[91,72,88,66,38],borderColor:'#8a3800',backgroundColor:'rgba(138,56,0,.08)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#8a3800'},
+      {label:'City avg', data:[52,55,48,57,26],borderColor:'#0a6655',backgroundColor:'rgba(10,102,85,.06)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#0a6655'}
+    ]
   },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'rgba(122,155,181,0.8)',font:chartDefaults.font,boxWidth:10}}},
-    scales:{r:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font,backdropColor:'transparent'},grid:{color:chartDefaults.gridColor},pointLabels:{color:chartDefaults.tickColor,font:chartDefaults.font},min:0,max:100}}
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:CP.tick,font:CP.font,boxWidth:8,padding:8}}},
+    scales:{r:{ticks:{color:CP.tick,font:CP.font,backdropColor:'transparent'},grid:{color:CP.grid},pointLabels:{color:CP.tick,font:CP.font},min:0,max:100}}
   }
 });
 
-// Groundwater chart
+// 4. Groundwater
 new Chart(document.getElementById('gwChart'),{
   type:'line',
   data:{
     labels:['2018','2019','2020','2021','2022','2023','2024'],
     datasets:[{
-      label:'Whitefield GW Level (m bgl)',
+      label:'Depth (m bgl)',
       data:[18,20,23,26,30,35,42],
-      borderColor:'#ffb627',backgroundColor:'rgba(255,182,39,0.1)',
-      borderWidth:2,fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#ffb627'
+      borderColor:'#8a5c00', backgroundColor:'rgba(138,92,0,.07)',
+      borderWidth:2, fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:'#8a5c00'
     }]
   },
-  options:{
-    responsive:true,maintainAspectRatio:false,
+  options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
     scales:{
-      x:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor}},
-      y:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor},reverse:true}
+      x:{ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid}},
+      y:{reverse:true,ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid},title:{display:true,text:'Depth (m)',color:CP.tick,font:CP.font}}
     }
   }
 });
 
-// Compare chart
+// 5. Stacked bar
 const top10 = [...WARDS].sort((a,b)=>b.crcs-a.crcs).slice(0,10);
-new Chart(document.getElementById('compareChart'),{
+new Chart(document.getElementById('stackChart'),{
   type:'bar',
   data:{
-    labels:top10.map(w=>w.ward),
+    labels: top10.map(w=>w.ward),
     datasets:[
-      {label:'Physical',data:top10.map(w=>w.physical),backgroundColor:'rgba(26,107,255,0.7)',stack:'s'},
-      {label:'Exposure',data:top10.map(w=>w.exposure),backgroundColor:'rgba(255,182,39,0.7)',stack:'s'},
-      {label:'Financial',data:top10.map(w=>w.financial),backgroundColor:'rgba(155,89,255,0.7)',stack:'s'},
+      {label:'Physical',data:top10.map(w=>w.physical),backgroundColor:'rgba(26,78,138,.72)',stack:'s'},
+      {label:'Exposure',data:top10.map(w=>w.exposure),backgroundColor:'rgba(138,92,0,.72)',stack:'s'},
+      {label:'Financial',data:top10.map(w=>w.financial),backgroundColor:'rgba(10,102,85,.72)',stack:'s'},
     ]
   },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'rgba(122,155,181,0.8)',font:chartDefaults.font,boxWidth:10}}},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:CP.tick,font:CP.font,boxWidth:10,padding:12}}},
     scales:{
-      x:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor},stacked:true},
-      y:{ticks:{color:chartDefaults.tickColor,font:chartDefaults.font},grid:{color:chartDefaults.gridColor},stacked:true,max:200}
+      x:{ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid},stacked:true},
+      y:{ticks:{color:CP.tick,font:CP.font},grid:{color:CP.grid},stacked:true}
     }
   }
 });
 
-// ── WARD TABLE ────────────────────────────────────────────────────────────
+// ── RANKINGS TABLE ────────────────────────────────────────────────────────
 let sortField='crcs', sortDir=-1;
+
 function renderTable(data){
-  const body=document.getElementById('rankBody');
-  body.innerHTML=data.map((w,i)=>{
-    const gs=gradeStyle(w.grade);
-    const barW=Math.round(w.crcs);
+  document.getElementById('rankBody').innerHTML = data.map((w,i)=>{
+    const gc=GRADE_COLORS[w.grade]||GRADE_COLORS['C'];
+    const pc=w.price<-4?'#922020':w.price<-2?'#8a3800':'#8a5c00';
     return `<tr>
-      <td style="color:var(--text3)">${i+1}</td>
-      <td style="color:var(--text);font-weight:600;cursor:pointer" onclick="showWardPanel('${w.ward}')">${w.ward}</td>
+      <td style="color:var(--ink3)">${i+1}</td>
+      <td style="color:var(--ink);font-weight:500;cursor:pointer" onclick="clickWard('${w.ward}')">${w.ward}</td>
       <td>${w.physical.toFixed(1)}</td>
       <td>${w.exposure.toFixed(1)}</td>
       <td>${w.financial.toFixed(1)}</td>
-      <td style="color:${gs.fg};font-weight:700">${w.crcs.toFixed(1)}</td>
-      <td><span class="grade-pill gp-${w.grade}">${w.grade}</span></td>
+      <td style="color:${scoreColor(w.crcs)};font-weight:500">${w.crcs.toFixed(1)}</td>
+      <td><span class="gp" style="background:${gc.bg};color:${gc.txt}">${w.grade}</span></td>
       <td>${w.conf}</td>
-      <td style="color:${w.price<-4?'#ff2d55':w.price<-2?'#ff6b35':'#ffb627'}">${w.price}%</td>
-      <td style="color:${w.loan>30?'#ff6b35':'#00e5c8'}">${w.loan>0?'+'+w.loan+'bps':'0 bps'}</td>
-      <td style="font-size:11px;color:var(--text2);max-width:180px;white-space:normal">${w.rec}</td>
+      <td style="color:${pc}">${w.price}%</td>
+      <td>${w.loan>0?'+'+w.loan+' bps':'0 bps'}</td>
+      <td style="font-size:11px;color:var(--ink2);white-space:normal;max-width:160px">${w.rec}</td>
     </tr>`;
   }).join('');
 }
 
-function sortBy(field){sortField=field;sortDir*=-1;filterTable();}
-function sortTable(){sortField=document.getElementById('rankSort').value;filterTable();}
 function filterTable(){
   const q=document.getElementById('rankSearch').value.toLowerCase();
+  const sf=document.getElementById('rankSort').value||sortField;
+  sortField=sf;
   let data=[...WARDS].filter(w=>w.ward.toLowerCase().includes(q));
   data.sort((a,b)=>{
-    const va=a[sortField]||0,vb=b[sortField]||0;
+    const va=a[sortField]??0, vb=b[sortField]??0;
     return typeof va==='string'?va.localeCompare(vb)*sortDir:(va-vb)*sortDir;
   });
   renderTable(data);
 }
+
+function sortBy(f){
+  if(sortField===f) sortDir*=-1; else {sortField=f; sortDir=-1;}
+  filterTable();
+}
+
+function clickWard(name){
+  selectedW=name; drawMap(); showWardPanel(name);
+  document.getElementById('map-sec').scrollIntoView({behavior:'smooth'});
+}
+
 filterTable();
 
 // ── SCENARIOS ─────────────────────────────────────────────────────────────
-const scContainer = document.getElementById('scenarioCards');
-scContainer.innerHTML = SCENARIOS.map((s,i)=>{
-  const isDown=s.delta<0;
-  const gradePill=gradeStyle(s.grade);
-  return `<div class="sc-card${i===0?' active':''}" onclick="selectScenario(${i},this)">
-    <div class="sc-name">${s.name}</div>
-    <div class="sc-delta ${isDown?'down':s.delta===0?'neutral':'up'}">${s.delta===0?'±0':s.delta>0?'+'+s.delta:-s.delta} pts</div>
-    <div class="sc-crcs">CRCS: <span style="color:${gradePill.fg};font-weight:700">${s.crcs}</span> <span class="grade-pill gp-${s.grade}" style="font-size:11px">${s.grade}</span></div>
+const SCENARIOS = [
+  {t:'Base case',        crcs:60.6,delta:0,   grade:'D',loan:'₹58,850',yr10:'₹5.89L',pv:'-4.7%',ins:'+28%',note:'Current state. Flood insurance rider mandatory. 10-year net disadvantage ₹13.2L vs Grade A.'},
+  {t:'+20% monsoon rainfall',crcs:66.2,delta:5.6,grade:'D',loan:'₹58,850',yr10:'₹5.89L',pv:'-5.4%',ins:'+28%',note:'Elevated flood sub-score. Reassess before monsoon season. Remaining in Grade D band.'},
+  {t:'+2°C UHI increase',crcs:65.2,delta:4.6,grade:'D',loan:'₹58,850',yr10:'₹5.89L',pv:'-5.2%',ins:'+28%',note:'Cool roof specification recommended. Energy costs rise. Shade trees can reduce local UHI.'},
+  {t:'+30% groundwater depletion',crcs:62.1,delta:1.5,grade:'D',loan:'₹58,850',yr10:'₹5.89L',pv:'-4.9%',ins:'+28%',note:'Verify BWSSB pipeline supply. Tanker dependency increases materially.'},
+  {t:'Combined climate shock',crcs:72.2,delta:11.6,grade:'E',loan:'₹1.29L',yr10:'₹12.9L',pv:'-6.1%',ins:'+42%',note:'All three stressors simultaneously. Grade E. Consider alternative location strongly.'},
+  {t:'Resilience investment',crcs:56.6,delta:-4.0,grade:'C',loan:'₹16,050',yr10:'₹1.61L',pv:'-4.2%',ins:'+14%',note:'₹8–12L flood-proofing + rainwater harvesting. Saves ₹4.97L over 10 years. NPV positive at 8% discount rate.'},
+];
+
+document.getElementById('scCards').innerHTML = SCENARIOS.map((s,i)=>{
+  const isNeg=s.delta<0, isZero=s.delta===0;
+  const dc=isNeg?'d-dn':isZero?'d-nu':'d-up';
+  const ds=isNeg?`−${Math.abs(s.delta).toFixed(1)}`:(isZero?'±0':'+'+s.delta.toFixed(1));
+  const gc=GRADE_COLORS[s.grade]||GRADE_COLORS['C'];
+  return `<div class="sc-card${i===0?' sel':''}" onclick="selScenario(${i},this)">
+    <div class="sc-t">${s.t}</div>
+    <div class="sc-d ${dc}">${ds}</div>
+    <div class="sc-crcs">CRCS ${s.crcs} &nbsp;<span style="background:${gc.bg};color:${gc.txt};padding:1px 7px;border-radius:3px;font-size:11px">${s.grade}</span></div>
   </div>`;
 }).join('');
 
-selectScenario(0, document.querySelector('.sc-card'));
-
-function selectScenario(idx, el){
-  document.querySelectorAll('.sc-card').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  const s=SCENARIOS[idx];
-  document.getElementById('sdTitle').textContent=s.name;
-  document.getElementById('sdGrid').innerHTML=`
-    <div class="sd-metric"><div class="sd-val">${s.crcs}</div><div class="sd-label">CRCS Score</div></div>
-    <div class="sd-metric"><div class="sd-val">${s.annualLoan}</div><div class="sd-label">Annual Loan Premium</div></div>
-    <div class="sd-metric"><div class="sd-val">${s.propVal}</div><div class="sd-label">Property Value Impact</div></div>
-    <div class="sd-metric"><div class="sd-val">${s.insur}</div><div class="sd-label">Insurance Adjustment</div></div>
-    <div class="sd-metric" style="grid-column:span 2"><div class="sd-val">${s.tenYr}</div><div class="sd-label">10-Year Cumulative Burden</div></div>
-    <div class="sd-metric" style="grid-column:span 2"><div class="sd-label" style="font-size:13px;color:var(--text2);line-height:1.6">${s.note}</div></div>`;
+function selScenario(i, el){
+  document.querySelectorAll('.sc-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const s=SCENARIOS[i];
+  document.getElementById('scdTitle').textContent=s.t;
+  document.getElementById('scdMetrics').innerHTML=`
+    <div class="scd-m"><div class="scd-v">${s.crcs}</div><div class="scd-l">CRCS score</div></div>
+    <div class="scd-m"><div class="scd-v">${s.loan}</div><div class="scd-l">Annual loan premium</div></div>
+    <div class="scd-m"><div class="scd-v">${s.pv}</div><div class="scd-l">Property value impact</div></div>
+    <div class="scd-m"><div class="scd-v">${s.ins}</div><div class="scd-l">Insurance adjustment</div></div>`;
+  document.getElementById('scdNote').textContent=s.note;
 }
-
-// ── INTERSECTION OBSERVER (fade in) ───────────────────────────────────────
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.style.opacity='1';});
-},{threshold:0.1});
-document.querySelectorAll('.dash-card,.pillar-card,.fin-band,.uc-card,.trust-card').forEach(el=>{
-  el.style.opacity='0';el.style.transition='opacity 0.5s ease, transform 0.3s ease';
-  observer.observe(el);
-});
-
-// Animate sub-bars when ward panel opens
-function animateBars(){
-  document.querySelectorAll('.sb-fill').forEach(bar=>{
-    const target=bar.style.width;
-    bar.style.width='0';
-    setTimeout(()=>{bar.style.width=target;},50);
-  });
-}
-
-// Patch showWardPanel to trigger bar animation
-const origShow=showWardPanel;
-window.showWardPanel=function(name){
-  origShow(name);
-  setTimeout(animateBars,100);
-};
+// init first
+selScenario(0, document.querySelector('.sc-card'));
 </script>
 </body>
 </html>
