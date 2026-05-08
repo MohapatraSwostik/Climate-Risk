@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRCS v3 — Climate Risk Credit Score · Bengaluru</title>
+<title>ClimateIQ — Climate Risk Intelligence · Bengaluru</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -245,11 +245,76 @@ table.dt tbody tr:hover td{background:var(--bg)}
 .step-arr{color:var(--ink3);padding:0 4px;font-size:13px}
 .flow-tag{background:var(--teal-l);color:var(--teal);border-radius:4px;padding:2px 8px;font-family:'Geist Mono',monospace;font-size:10px;display:inline-block}
 
-@media(max-width:900px){
-  .sidebar{display:none}
-  .g4,.g3,.g2{grid-template-columns:1fr}
-  .map-shell{grid-template-columns:1fr;height:auto}
-}
+/* ─── LIVE MONITOR ───────────────────────────────────────────────────── */
+.live-badge-pulse{background:rgba(220,50,50,.12)!important;color:#c03030!important;animation:badgepulse 2s ease infinite}
+@keyframes badgepulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.monitor-shell{display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:16px}
+.monitor-map-wrap{background:#0f1a14;border-radius:10px;overflow:hidden;position:relative;min-height:420px}
+canvas#liveMapCvs{display:block;width:100%;height:100%}
+.lm-overlay-bar{position:absolute;top:14px;left:14px;display:flex;gap:8px;flex-wrap:wrap}
+.lm-btn{padding:5px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(15,26,20,.85);font-family:'Geist Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .15s;backdrop-filter:blur(6px)}
+.lm-btn:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.lm-btn.on{background:rgba(58,170,146,.25);border-color:var(--teal-m);color:var(--teal-m)}
+.lm-legend{position:absolute;bottom:14px;left:14px;background:rgba(10,18,14,.88);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:11px 14px;backdrop-filter:blur(6px)}
+.lml-h{font-family:'Geist Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-bottom:8px}
+.lml-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:11px;color:rgba(255,255,255,.55)}
+.lml-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.lm-timestamp{position:absolute;top:14px;right:14px;background:rgba(10,18,14,.88);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 12px;font-family:'Geist Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px}
+.lm-ts-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:pulse 2s ease infinite;flex-shrink:0}
+
+.monitor-side{display:flex;flex-direction:column;gap:12px}
+.mon-kpi{background:#0f1a14;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px}
+.mk-label{font-family:'Geist Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:.08em;margin-bottom:8px}
+.mk-val{font-family:'Fraunces',serif;font-size:32px;color:#f0ede6;line-height:1}
+.mk-sub{font-size:11px;margin-top:4px}
+.mk-up{color:#ef4444}.mk-down{color:#22c55e}.mk-neutral{color:rgba(255,255,255,.4)}
+.mk-icon{font-size:22px;margin-bottom:6px}
+
+.top-risk-panel{background:#0f1a14;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;flex:1}
+.trp-h{font-family:'Geist Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:.08em;margin-bottom:12px}
+.trp-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.trp-row:last-child{border-bottom:none}
+.trp-name{font-size:12.5px;font-weight:500;color:#f0ede6}
+.trp-zone{font-family:'Geist Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.trp-score{font-family:'Fraunces',serif;font-size:20px;line-height:1;margin-right:8px}
+.trp-badge{font-family:'Geist Mono',monospace;font-size:9.5px;padding:3px 8px;border-radius:4px;font-weight:500}
+.tb-high{background:rgba(239,68,68,.2);color:#f87171}
+.tb-elevated{background:rgba(245,158,11,.2);color:#fbbf24}
+.tb-moderate{background:rgba(58,170,146,.2);color:#3aaa92}
+
+.alerts-panel{background:#0f1a14;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:0}
+.ap-h{font-family:'Geist Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:.08em;margin-bottom:12px}
+.alert-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.alert-row:last-child{border-bottom:none}
+.alert-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ai-flood{background:rgba(59,130,246,.15)}
+.ai-heat{background:rgba(245,158,11,.15)}
+.ai-water{background:rgba(58,170,146,.15)}
+.alert-body{flex:1}
+.ab-title{font-size:12.5px;font-weight:500;color:#f0ede6;margin-bottom:2px}
+.ab-sub{font-size:11px;color:rgba(255,255,255,.4)}
+.alert-time{font-family:'Geist Mono',monospace;font-size:10px;color:rgba(255,255,255,.25);white-space:nowrap;flex-shrink:0;padding-top:1px}
+
+.impact-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.impact-card{background:#0f1a14;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px}
+.ic-icon{font-size:20px;margin-bottom:10px}
+.ic-title{font-size:13px;font-weight:500;color:#f0ede6;margin-bottom:8px}
+.ic-items{list-style:none}
+.ic-items li{font-size:11.5px;color:rgba(255,255,255,.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:6px}
+.ic-items li::before{content:'→';color:rgba(58,170,146,.7);flex-shrink:0;font-size:10px;margin-top:1px}
+
+.how-works{background:#0f1a14;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:20px;margin-bottom:0}
+.hw-h{font-family:'Geist Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:.08em;margin-bottom:14px}
+.hw-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.hw-step{padding:0 16px;border-right:1px solid rgba(255,255,255,.06);position:relative}
+.hw-step:first-child{padding-left:0}
+.hw-step:last-child{border-right:none}
+.hw-n{font-family:'Geist Mono',monospace;font-size:9px;color:rgba(58,170,146,.7);letter-spacing:.08em;margin-bottom:6px}
+.hw-title{font-size:12.5px;font-weight:500;color:#f0ede6;margin-bottom:6px}
+.hw-body{font-size:11.5px;color:rgba(255,255,255,.4);line-height:1.55}
+
+@media(max-width:900px){.monitor-shell{grid-template-columns:1fr}.impact-row{grid-template-columns:1fr}.hw-steps{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -259,9 +324,9 @@ table.dt tbody tr:hover td{background:var(--bg)}
 <aside class="sidebar">
   <div class="sb-brand">
     <div class="sb-logo">
-      <div class="sb-mark">CR</div>
+      <div class="sb-mark">CI</div>
       <div>
-        <div class="sb-title">CRCS v3</div>
+        <div class="sb-title">ClimateIQ</div>
         <div class="sb-subtitle">Bengaluru</div>
       </div>
     </div>
@@ -275,6 +340,9 @@ table.dt tbody tr:hover td{background:var(--bg)}
     </div>
     <div class="sb-item" onclick="nav('map',this)">
       <div class="sb-icon">⊕</div>Bengaluru Risk Map
+    </div>
+    <div class="sb-item" onclick="nav('monitor',this)">
+      <div class="sb-icon">◉</div>Live Monitor<span class="sb-badge live-badge-pulse">LIVE</span>
     </div>
 
     <div class="sb-section-label">Analytics</div>
@@ -304,7 +372,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
   </nav>
 
   <div class="sb-footer">
-    <div class="sb-version mono">CRCS v3.0 · June 2024</div>
+    <div class="sb-version mono">ClimateIQ v3 · June 2024</div>
     <div class="sb-version mono" style="margin-top:3px;color:#c0bdb5">Confidence: 0.709</div>
   </div>
 </aside>
@@ -316,12 +384,12 @@ table.dt tbody tr:hover td{background:var(--bg)}
     <div class="ticker-inner">
       <span class="tick-seg">IMD alert — <b>heavy rain warning, Bengaluru South &amp; East</b></span>
       <span class="tick-seg">Groundwater — <b>Whitefield depletion +18% YoY · CGWB 2024</b></span>
-      <span class="tick-seg">CRCS v3 — <b>25 wards · mean score 46.2 · confidence 0.709</b></span>
+      <span class="tick-seg">ClimateIQ — <b>25 wards · mean score 46.2 · confidence 0.709</b></span>
       <span class="tick-seg">RBI draft — <b>banks required to quantify property-level climate risk</b></span>
       <span class="tick-seg">Monsoon 2024 — <b>rainfall 847mm · +12% above 30-yr normal</b></span>
       <span class="tick-seg">IMD alert — <b>heavy rain warning, Bengaluru South &amp; East</b></span>
       <span class="tick-seg">Groundwater — <b>Whitefield depletion +18% YoY · CGWB 2024</b></span>
-      <span class="tick-seg">CRCS v3 — <b>25 wards · mean score 46.2 · confidence 0.709</b></span>
+      <span class="tick-seg">ClimateIQ — <b>25 wards · mean score 46.2 · confidence 0.709</b></span>
       <span class="tick-seg">RBI draft — <b>banks required to quantify property-level climate risk</b></span>
       <span class="tick-seg">Monsoon 2024 — <b>rainfall 847mm · +12% above 30-yr normal</b></span>
     </div>
@@ -345,7 +413,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
 
     <!-- ══════════════════════════════════════════ OVERVIEW -->
     <div class="section-page active" id="pg-overview">
-      <div class="page-h">Climate Risk Credit Score <em>·</em> Bengaluru</div>
+      <div class="page-h">ClimateIQ <em>·</em> Bengaluru</div>
       <p class="page-sub">India's first ward-level climate risk platform — translating satellite intelligence, infrastructure data, and financial signals into a single 0–100 score for every Bengaluru ward.</p>
 
       <div class="stat-row">
@@ -357,7 +425,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
 
       <div class="g2" style="margin-bottom:16px">
         <div class="card">
-          <div class="label">City-wide CRCS distribution</div>
+          <div class="label">City-wide ClimateIQ distribution</div>
           <div class="chart-wrap tall"><canvas id="ovDistChart"></canvas></div>
         </div>
         <div class="card">
@@ -455,8 +523,8 @@ table.dt tbody tr:hover td{background:var(--bg)}
       <div style="background:var(--teal-l);border-radius:10px;padding:18px 20px;display:flex;align-items:center;gap:14px">
         <div style="font-size:20px;flex-shrink:0">💡</div>
         <div>
-          <div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:2px">CRCS = the CIBIL score for climate risk in real estate</div>
-          <div style="font-size:12.5px;color:var(--teal);opacity:.8">Every rupee lent, every policy issued, every property bought in Bengaluru should reference a CRCS score. The data already exists. The infrastructure now does too.</div>
+          <div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:2px">ClimateIQ = the CIBIL score for climate risk in real estate</div>
+          <div style="font-size:12.5px;color:var(--teal);opacity:.8">Every rupee lent, every policy issued, every property bought in Bengaluru should reference a ClimateIQ score. The data already exists. The infrastructure now does too.</div>
         </div>
       </div>
     </div>
@@ -476,7 +544,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
             <button class="layer-btn" onclick="setLayer('financial',this)">Financial</button>
           </div>
           <div class="map-legend">
-            <div class="ml-h">CRCS GRADE</div>
+            <div class="ml-h">ClimateIQ GRADE</div>
             <div class="ml-row"><div class="ml-dot" style="background:#2a6830"></div>A — Low (0–25)</div>
             <div class="ml-row"><div class="ml-dot" style="background:#0c6b5a"></div>B — Moderate (26–40)</div>
             <div class="ml-row"><div class="ml-dot" style="background:#8c5e00"></div>C — Elevated (41–55)</div>
@@ -526,7 +594,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
           <div style="display:flex;gap:8px">
             <input type="text" id="wSearch" placeholder="Search ward…" oninput="filterW()" style="border:1px solid var(--rule);background:var(--bg);border-radius:6px;padding:6px 11px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink);outline:none;width:160px">
             <select id="wSort" onchange="filterW()" style="border:1px solid var(--rule);background:var(--white);border-radius:6px;padding:6px 10px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink);outline:none;cursor:pointer">
-              <option value="crcs">Sort: CRCS</option>
+              <option value="crcs">Sort: ClimateIQ</option>
               <option value="physical">Physical</option>
               <option value="exposure">Exposure</option>
               <option value="financial">Financial</option>
@@ -541,7 +609,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
               <th onclick="srtW('physical')">Physical</th>
               <th onclick="srtW('exposure')">Exposure</th>
               <th onclick="srtW('financial')">Financial</th>
-              <th onclick="srtW('crcs')">CRCS ↓</th>
+              <th onclick="srtW('crcs')">ClimateIQ ↓</th>
               <th>Grade</th>
               <th onclick="srtW('price')">Price Δ</th>
               <th onclick="srtW('loan')">Loan bps</th>
@@ -556,11 +624,11 @@ table.dt tbody tr:hover td{background:var(--bg)}
     <!-- ══════════════════════════════════════════ FINANCIAL MATRIX -->
     <div class="section-page" id="pg-financial">
       <div class="page-h">Financial <em>Decision Matrix</em></div>
-      <p class="page-sub">How CRCS scores translate into bank, insurance, and buyer decisions. Every grade band triggers distinct financial actions.</p>
+      <p class="page-sub">How ClimateIQ scores translate into bank, insurance, and buyer decisions. Every grade band triggers distinct financial actions.</p>
 
       <div class="g2" style="margin-bottom:16px">
         <div class="fin-band fb-A">
-          <div class="fb-grade">A</div><div class="fb-range mono">CRCS 0–25</div>
+          <div class="fb-grade">A</div><div class="fb-range mono">ClimateIQ 0–25</div>
           <div class="fb-level">Low risk</div>
           <div class="fb-row"><div class="fb-k">BANK</div><div class="fb-v">Standard · LTV 90%</div></div>
           <div class="fb-row"><div class="fb-k">LOAN PREMIUM</div><div class="fb-v">0 bps</div></div>
@@ -568,7 +636,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
           <div class="fb-row"><div class="fb-k">BUYER</div><div class="fb-v">Safe · green loan eligible</div></div>
         </div>
         <div class="fin-band fb-B">
-          <div class="fb-grade">B</div><div class="fb-range mono">CRCS 26–40</div>
+          <div class="fb-grade">B</div><div class="fb-range mono">ClimateIQ 26–40</div>
           <div class="fb-level">Moderate risk</div>
           <div class="fb-row"><div class="fb-k">BANK</div><div class="fb-v">Standard · LTV 85%</div></div>
           <div class="fb-row"><div class="fb-k">LOAN PREMIUM</div><div class="fb-v">+15 bps</div></div>
@@ -576,7 +644,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
           <div class="fb-row"><div class="fb-k">BUYER</div><div class="fb-v">Monitor · disclose</div></div>
         </div>
         <div class="fin-band fb-C">
-          <div class="fb-grade">C</div><div class="fb-range mono">CRCS 41–55</div>
+          <div class="fb-grade">C</div><div class="fb-range mono">ClimateIQ 41–55</div>
           <div class="fb-level">Elevated risk</div>
           <div class="fb-row"><div class="fb-k">BANK</div><div class="fb-v">Review · LTV 85%</div></div>
           <div class="fb-row"><div class="fb-k">LOAN PREMIUM</div><div class="fb-v">+15 bps</div></div>
@@ -584,7 +652,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
           <div class="fb-row"><div class="fb-k">BUYER</div><div class="fb-v">Check sub-scores</div></div>
         </div>
         <div class="fin-band fb-D">
-          <div class="fb-grade">D</div><div class="fb-range mono">CRCS 56–100</div>
+          <div class="fb-grade">D</div><div class="fb-range mono">ClimateIQ 56–100</div>
           <div class="fb-level">High / severe risk</div>
           <div class="fb-row"><div class="fb-k">BANK</div><div class="fb-v">Restrict · LTV 65–75%</div></div>
           <div class="fb-row"><div class="fb-k">LOAN PREMIUM</div><div class="fb-v">+40–120 bps</div></div>
@@ -594,7 +662,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
       </div>
 
       <div class="card">
-        <div class="label" style="margin-bottom:14px">Rupee impact — ₹1.42 Cr reference property, Bellandur (CRCS 60.6, Grade D)</div>
+        <div class="label" style="margin-bottom:14px">Rupee impact — ₹1.42 Cr reference property, Bellandur (ClimateIQ 60.6, Grade D)</div>
         <div class="g4">
           <div style="border-left:2px solid var(--teal-m);padding-left:12px">
             <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--ink)">+₹58,850</div>
@@ -619,7 +687,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
     <!-- ══════════════════════════════════════════ SCENARIO ENGINE -->
     <div class="section-page" id="pg-scenario">
       <div class="page-h">Bellandur <em>Scenario Engine</em></div>
-      <p class="page-sub">Forward-looking climate scenarios for a reference property. See how CRCS, financial burden, and resilience ROI shift across six conditions.</p>
+      <p class="page-sub">Forward-looking climate scenarios for a reference property. See how ClimateIQ, financial burden, and resilience ROI shift across six conditions.</p>
 
       <div class="g2" style="margin-bottom:16px;align-items:start">
         <div class="card">
@@ -632,7 +700,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
           </div>
         </div>
         <div class="card">
-          <div class="label">Base CRCS score</div>
+          <div class="label">Base ClimateIQ score</div>
           <div style="font-family:'Fraunces',serif;font-size:52px;color:var(--orange);line-height:1;margin:8px 0 4px">60.6</div>
           <div style="font-size:13px;color:var(--ink2);margin-bottom:14px">Grade D · High risk · CI: 59.0–62.2</div>
           <div style="border-top:1px solid var(--rule);padding-top:12px">
@@ -690,8 +758,8 @@ table.dt tbody tr:hover td{background:var(--bg)}
       </div>
 
       <div class="formula-box" style="margin-bottom:16px">
-        <div class="f-label">CRCS V3 MASTER FORMULA</div>
-        <div class="f-formula">CRCS = <span class="hl">0.45</span> × Physical + <span class="hl">0.30</span> × Exposure + <span class="hl">0.25</span> × Financial</div>
+        <div class="f-label">ClimateIQ MASTER FORMULA</div>
+        <div class="f-formula">ClimateIQ = <span class="hl">0.45</span> × Physical + <span class="hl">0.30</span> × Exposure + <span class="hl">0.25</span> × Financial</div>
         <div class="f-note">PC1 explains 82.6% of variance · Confidence-adjusted · 1,000 Monte Carlo simulations per ward</div>
       </div>
 
@@ -771,7 +839,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
     <!-- ══════════════════════════════════════════ VALIDATION -->
     <div class="section-page" id="pg-validation">
       <div class="page-h">Validation <em>&amp; Confidence</em></div>
-      <p class="page-sub">Every CRCS score is transparent, auditable, and validated against real flood events. No black-box AI — an explainable climate-financial framework.</p>
+      <p class="page-sub">Every ClimateIQ score is transparent, auditable, and validated against real flood events. No black-box AI — an explainable climate-financial framework.</p>
 
       <div class="g4" style="margin-bottom:16px">
         <div class="val-stat"><div class="vs-n">82.6%</div><div class="vs-l">PC1 variance explained</div></div>
@@ -799,14 +867,14 @@ table.dt tbody tr:hover td{background:var(--bg)}
 
       <div class="g2">
         <div class="card"><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:8px">PCA-derived weights</div><p style="font-size:13px;color:var(--ink2);line-height:1.65">Layer weights (0.45/0.30/0.25) derived from PCA on a 25×12 normalised ward matrix using scikit-learn. PC1 explains 82.6% of variance — statistically confirming the composite index is valid. No hand-picking.</p></div>
-        <div class="card"><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:8px">Monte Carlo uncertainty</div><p style="font-size:13px;color:var(--ink2);line-height:1.65">1,000 simulations per ward with Gaussian noise scaled to confidence. Average CI width: 3–4 CRCS points. Borderline wards (CI crossing a band boundary) are flagged for manual underwriter review.</p></div>
+        <div class="card"><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:8px">Monte Carlo uncertainty</div><p style="font-size:13px;color:var(--ink2);line-height:1.65">1,000 simulations per ward with Gaussian noise scaled to confidence. Average CI width: 3–4 ClimateIQ points. Borderline wards (CI crossing a band boundary) are flagged for manual underwriter review.</p></div>
       </div>
     </div>
 
     <!-- ══════════════════════════════════════════ INVESTOR -->
     <div class="section-page" id="pg-investor">
       <div class="page-h">Investor <em>/ Product Strategy</em></div>
-      <p class="page-sub">India's ₹260 lakh crore residential real estate market prices climate risk at zero. CRCS is the infrastructure layer that corrects this systemic mispricing.</p>
+      <p class="page-sub">India's ₹260 lakh crore residential real estate market prices climate risk at zero. ClimateIQ is the infrastructure layer that corrects this systemic mispricing.</p>
 
       <div class="g4" style="margin-bottom:16px">
         <div class="inv-metric"><div class="im-v">₹260L Cr</div><div class="im-l">Total addressable market</div></div>
@@ -825,7 +893,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
               <tr><td>Zillow Climate Risk</td><td class="crs">✗</td><td class="crs">✗</td><td class="crs">✗</td></tr>
               <tr><td>Moody's Climate Analytics</td><td>Partial</td><td class="crs">✗</td><td class="crs">✗</td></tr>
               <tr><td>BlackRock Aladdin</td><td>Portfolio only</td><td class="crs">✗</td><td class="crs">✗</td></tr>
-              <tr class="own-row"><td>CRCS v3</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
+              <tr class="own-row"><td>ClimateIQ v3</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
             </tbody>
           </table>
           <div style="background:var(--teal-l);border-radius:8px;padding:14px;margin-top:12px">
@@ -849,6 +917,192 @@ table.dt tbody tr:hover td{background:var(--bg)}
             <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--ink2)">Government dashboard contract</span><span style="font-family:'Geist Mono',monospace;color:var(--ink)">₹50–200L/yr</span></div>
             <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--ink2)">Developer project report</span><span style="font-family:'Geist Mono',monospace;color:var(--ink)">₹2–10L/project</span></div>
             <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--ink2)">Consumer full report</span><span style="font-family:'Geist Mono',monospace;color:var(--ink)">₹500–2,000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ LIVE MONITOR -->
+    <div class="section-page" id="pg-monitor" style="background:#0a1210;margin:-28px -32px;padding:28px 32px;min-height:100%">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s ease infinite;flex-shrink:0"></div>
+            <div style="font-family:'Fraunces',serif;font-size:26px;color:#f0ede6;font-weight:400;line-height:1">ClimateIQ <em style="color:#3aaa92">Live Monitor</em></div>
+          </div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(255,255,255,.35);margin-left:17px">Real-time Climate Intelligence · Bengaluru</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 12px;font-family:'Geist Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.45)">Bengaluru · 25 wards</div>
+          <div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:6px 12px;font-family:'Geist Mono',monospace;font-size:10.5px;color:#f87171;display:flex;align-items:center;gap:6px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#ef4444;animation:pulse 2s ease infinite;display:inline-block"></span>
+            IMD Rain Alert Active
+          </div>
+        </div>
+      </div>
+
+      <!-- Top KPIs row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+        <div class="mon-kpi" style="display:flex;align-items:center;gap:16px">
+          <div>
+            <div style="width:52px;height:52px;position:relative">
+              <canvas id="gaugeChart" width="52" height="52"></canvas>
+            </div>
+          </div>
+          <div>
+            <div class="mk-label">ClimateIQ AVG SCORE</div>
+            <div class="mk-val">46.2<span style="font-size:16px;color:rgba(255,255,255,.3);font-family:'Geist Mono',monospace">/100</span></div>
+            <div class="mk-sub mk-up">↑ 2.4 pts vs last 24h</div>
+          </div>
+        </div>
+        <div class="mon-kpi" style="display:flex;align-items:center;gap:16px">
+          <div class="mk-icon">🌧️</div>
+          <div>
+            <div class="mk-label">IMD RAINFALL (24H)</div>
+            <div class="mk-val">84<span style="font-size:16px;color:rgba(255,255,255,.3);font-family:'Geist Mono',monospace"> mm</span></div>
+            <div class="mk-sub mk-up">↑ 18% above seasonal avg</div>
+          </div>
+        </div>
+        <div class="mon-kpi" style="display:flex;align-items:center;gap:16px">
+          <div class="mk-icon">🛰️</div>
+          <div>
+            <div class="mk-label">SATELLITE LAST UPDATED</div>
+            <div class="mk-val" style="font-size:24px">4 min ago</div>
+            <div class="mk-sub mk-neutral">Data source: ISRO Bhuvan</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map + top risk wards -->
+      <div class="monitor-shell">
+        <div class="monitor-map-wrap">
+          <canvas id="liveMapCvs"></canvas>
+          <div class="lm-overlay-bar">
+            <button class="lm-btn on" onclick="setLiveLayer('heatmap',this)">Heatmap</button>
+            <button class="lm-btn" onclick="setLiveLayer('flood',this)">Flood Risk</button>
+            <button class="lm-btn" onclick="setLiveLayer('uhi',this)">Heat Island</button>
+            <button class="lm-btn" onclick="setLiveLayer('water',this)">Water Stress</button>
+          </div>
+          <div class="lm-timestamp"><span class="lm-ts-dot"></span>Live · updated 4 min ago</div>
+          <div class="lm-legend">
+            <div class="lml-h">ClimateIQ RISK LEVEL</div>
+            <div class="lml-row"><div class="lml-dot" style="background:#16a34a"></div>Low (0–25)</div>
+            <div class="lml-row"><div class="lml-dot" style="background:#0c6b5a"></div>Moderate (26–40)</div>
+            <div class="lml-row"><div class="lml-dot" style="background:#d97706"></div>Elevated (41–55)</div>
+            <div class="lml-row"><div class="lml-dot" style="background:#dc2626"></div>High (56–75)</div>
+            <div class="lml-row" style="margin-bottom:0"><div class="lml-dot" style="background:#7f1d1d"></div>Severe (76–100)</div>
+          </div>
+        </div>
+
+        <div class="monitor-side">
+          <div class="top-risk-panel">
+            <div class="trp-h">TOP RISK WARDS · BENGALURU</div>
+            <div class="trp-row">
+              <div><div class="trp-name">Majestic</div><div class="trp-zone">Central Zone</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="trp-score" style="color:#f87171">69.5</span><span class="trp-badge tb-high">High</span></div>
+            </div>
+            <div class="trp-row">
+              <div><div class="trp-name">Bellandur</div><div class="trp-zone">South-East Zone</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="trp-score" style="color:#f87171">60.6</span><span class="trp-badge tb-high">High</span></div>
+            </div>
+            <div class="trp-row">
+              <div><div class="trp-name">BTM Layout</div><div class="trp-zone">South Zone</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="trp-score" style="color:#f87171">58.1</span><span class="trp-badge tb-high">High</span></div>
+            </div>
+            <div class="trp-row">
+              <div><div class="trp-name">Koramangala</div><div class="trp-zone">South Zone</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="trp-score" style="color:#fbbf24">55.8</span><span class="trp-badge tb-elevated">Elevated</span></div>
+            </div>
+            <div class="trp-row">
+              <div><div class="trp-name">Marathahalli</div><div class="trp-zone">East Zone</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="trp-score" style="color:#fbbf24">55.4</span><span class="trp-badge tb-elevated">Elevated</span></div>
+            </div>
+          </div>
+
+          <div class="alerts-panel">
+            <div class="ap-h">RECENT ALERTS</div>
+            <div class="alert-row">
+              <div class="alert-ico ai-flood">🌊</div>
+              <div class="alert-body">
+                <div class="ab-title">High Flood Risk Detected</div>
+                <div class="ab-sub">Bellandur, BTM Layout, Koramangala</div>
+              </div>
+              <div class="alert-time">8 min ago</div>
+            </div>
+            <div class="alert-row">
+              <div class="alert-ico ai-heat">🌡️</div>
+              <div class="alert-body">
+                <div class="ab-title">Heat Stress Alert</div>
+                <div class="ab-sub">UHI intensity elevated · Majestic, Shivajinagar</div>
+              </div>
+              <div class="alert-time">22 min ago</div>
+            </div>
+            <div class="alert-row">
+              <div class="alert-ico ai-water">💧</div>
+              <div class="alert-body">
+                <div class="ab-title">Water Stress Rising</div>
+                <div class="ab-sub">Borewell depletion accelerating · Whitefield</div>
+              </div>
+              <div class="alert-time">41 min ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business impact row -->
+      <div class="impact-row">
+        <div class="impact-card">
+          <div class="ic-icon">🏦</div>
+          <div class="ic-title">Banks</div>
+          <ul class="ic-items">
+            <li>Pause or re-evaluate loan approvals in high-risk wards</li>
+            <li>Dynamically adjust LTV caps during monsoon peaks</li>
+            <li>Trigger enhanced collateral risk assessment</li>
+          </ul>
+        </div>
+        <div class="impact-card">
+          <div class="ic-icon">🛡️</div>
+          <div class="ic-title">Insurers</div>
+          <ul class="ic-items">
+            <li>Prepare dynamic premium adjustments in real time</li>
+            <li>Pre-position claims teams for high-alert wards</li>
+            <li>Trigger flood rider activation for Grade D/E zones</li>
+          </ul>
+        </div>
+        <div class="impact-card">
+          <div class="ic-icon">🗺️</div>
+          <div class="ic-title">Governments</div>
+          <ul class="ic-items">
+            <li>Live ward-level risk visibility for BBMP / ULBs</li>
+            <li>Deploy drainage response teams to flagged wards</li>
+            <li>Activate emergency infrastructure protocols</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="how-works">
+        <div class="hw-h">HOW DYNAMIC MONSOON INTELLIGENCE WORKS</div>
+        <div class="hw-steps">
+          <div class="hw-step">
+            <div class="hw-n">STEP 01</div>
+            <div class="hw-title">IMD Rainfall Feeds</div>
+            <div class="hw-body">Real-time gridded rainfall data triggers flood-risk multiplier adjustments per ward when extreme thresholds are crossed.</div>
+          </div>
+          <div class="hw-step">
+            <div class="hw-n">STEP 02</div>
+            <div class="hw-title">ISRO Flood Imagery</div>
+            <div class="hw-body">Sentinel-1 SAR and ISRO RISAT imagery validates inundation patterns and updates ward flood-risk sub-scores within 24 hours.</div>
+          </div>
+          <div class="hw-step">
+            <div class="hw-n">STEP 03</div>
+            <div class="hw-title">Score Recalculation</div>
+            <div class="hw-body">ClimateIQ composite scores are recalculated with updated physical risk inputs. Monte Carlo CI bounds are recalculated across 1,000 simulations.</div>
+          </div>
+          <div class="hw-step">
+            <div class="hw-n">STEP 04</div>
+            <div class="hw-title">API Push to Stakeholders</div>
+            <div class="hw-body">Updated scores pushed via REST API to bank origination systems, insurer underwriting platforms, and government dashboards.</div>
           </div>
         </div>
       </div>
@@ -893,7 +1147,7 @@ const WD = {
   'Koramangala': {zone:'South Zone',crcs:55.8,grade:'C',ci:'54.2–57.4',flood:76,uhi:59,water:48,expo:66,fin:31,price:'-4.1%',ins:'+14%',ltv:'85% LTV cap',monsoon:'High — filled tank bed',trust:'Lies on filled Koramangala kere. DEM shows 2.1m below surrounding roads.'},
   'Indiranagar': {zone:'East Zone',crcs:46.0,grade:'C',ci:'44.4–47.7',flood:44,uhi:74,water:38,expo:60,fin:25,price:'-2.9%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Moderate — UHI risk',trust:'Landsat LST: 3.2°C above Cubbon Park baseline.'},
   'HSR Layout':  {zone:'South Zone',crcs:52.6,grade:'C',ci:'51.0–54.1',flood:58,uhi:61,water:48,expo:62,fin:31,price:'-3.7%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Moderate-high',trust:'Backtest FN 2022. Localised drain blockages not satellite-visible.'},
-  'Majestic':    {zone:'Central Zone',crcs:69.5,grade:'D',ci:'67.9–71.2',flood:72,uhi:86,water:45,expo:86,fin:45,price:'-5.8%',ins:'+28%',ltv:'75% LTV cap',monsoon:'Very high',trust:'Highest CRCS. 1950s drainage. Flooded 2019, 2021, 2022 per BBMP.'},
+  'Majestic':    {zone:'Central Zone',crcs:69.5,grade:'D',ci:'67.9–71.2',flood:72,uhi:86,water:45,expo:86,fin:45,price:'-5.8%',ins:'+28%',ltv:'75% LTV cap',monsoon:'Very high',trust:'Highest ClimateIQ. 1950s drainage. Flooded 2019, 2021, 2022 per BBMP.'},
   'Yelahanka':   {zone:'North Zone',crcs:25.5,grade:'A',ci:'23.9–27.2',flood:26,uhi:35,water:26,expo:35,fin:13,price:'-0.4%',ins:'+5%',ltv:'90% — green loan',monsoon:'Low',trust:'Reference baseline. Newer infra. NDVI above ward median.'},
   'JP Nagar':    {zone:'South Zone',crcs:37.8,grade:'B',ci:'36.0–39.4',flood:39,uhi:51,water:32,expo:51,fin:19,price:'-1.9%',ins:'+14%',ltv:'85% LTV cap',monsoon:'Low-moderate',trust:'Good BBMP maintenance. Puttenahalli Lake managed. Minor flooding only.'},
 };
@@ -906,13 +1160,13 @@ const scoreCol = s => s<=25?'#2a6830':s<=40?'#0c6b5a':s<=55?'#8c5e00':s<=70?'#8a
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────
 const PAGE_LABELS = {
-  overview:'Overview', map:'Bengaluru Risk Map', ward:'Ward Analytics',
+  overview:'Overview', map:'Bengaluru Risk Map', monitor:'Live Monitor', ward:'Ward Analytics',
   scenario:'Scenario Engine',
   method:'Methodology', pipeline:'Data Pipeline',
   validation:'Validation & Confidence', investor:'Investor / Product'
 };
 const PAGE_SECTIONS = {
-  overview:'Platform', map:'Platform', ward:'Analytics',
+  overview:'Platform', map:'Platform', monitor:'Platform', ward:'Analytics',
   scenario:'Analytics',
   method:'Methodology', pipeline:'Methodology',
   validation:'Methodology', investor:'Strategy'
@@ -926,6 +1180,7 @@ function nav(id, el) {
   document.getElementById('tbTitle').textContent = PAGE_LABELS[id];
   document.getElementById('tbCrumb').textContent = PAGE_SECTIONS[id];
   if(id === 'map') { setTimeout(resizeMap, 100); }
+  if(id === 'monitor') { setTimeout(initLiveMonitor, 100); }
   if(id === 'ward') { setTimeout(initWardCharts, 100); }
 }
 
@@ -1168,7 +1423,7 @@ function buildScenarios() {
       <div class="sc-delta ${dc}">${ds}</div>
       <div class="sc-info">
         <div class="sc-name">${s.t}</div>
-        <div class="sc-sub">CRCS ${s.crcs} &nbsp;<span style="background:${gc.bg};color:${gc.txt};padding:1px 7px;border-radius:4px;font-size:10px">${s.grade}</span></div>
+        <div class="sc-sub">ClimateIQ ${s.crcs} &nbsp;<span style="background:${gc.bg};color:${gc.txt};padding:1px 7px;border-radius:4px;font-size:10px">${s.grade}</span></div>
       </div>
       <div class="sc-arrow">›</div>
     </div>`;
@@ -1181,7 +1436,7 @@ function selSc(i, el) {
   const s=SC[i];
   document.getElementById('scdTitle').textContent=s.t;
   document.getElementById('scdGrid').innerHTML=`
-    <div class="scd-m"><div class="scd-v">${s.crcs}</div><div class="scd-l">CRCS score</div></div>
+    <div class="scd-m"><div class="scd-v">${s.crcs}</div><div class="scd-l">ClimateIQ score</div></div>
     <div class="scd-m"><div class="scd-v">${s.loan}</div><div class="scd-l">Annual loan premium</div></div>
     <div class="scd-m"><div class="scd-v">${s.pv}</div><div class="scd-l">Property value impact</div></div>
     <div class="scd-m"><div class="scd-v">${s.ins}</div><div class="scd-l">Insurance adjustment</div></div>`;
@@ -1227,6 +1482,121 @@ selSc(0, document.querySelector('.sc-item'));
 
 window.addEventListener('resize', () => {
   if(document.getElementById('pg-map').classList.contains('active')) resizeMap();
+});
+
+// ── LIVE MONITOR ─────────────────────────────────────────────────────────
+let liveLayer = 'heatmap';
+let liveInited = false;
+
+function setLiveLayer(layer, btn) {
+  liveLayer = layer;
+  document.querySelectorAll('.lm-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  drawLiveMap();
+}
+
+function initLiveMonitor() {
+  if(liveInited) { resizeLiveMap(); return; }
+  liveInited = true;
+  resizeLiveMap();
+  drawGauge();
+  setInterval(() => {
+    if(document.getElementById('pg-monitor').classList.contains('active')) drawLiveMap();
+  }, 4000);
+}
+
+function resizeLiveMap() {
+  const cv = document.getElementById('liveMapCvs');
+  if(!cv) return;
+  cv.width = cv.parentElement.offsetWidth;
+  cv.height = cv.parentElement.offsetHeight;
+  drawLiveMap();
+}
+
+function liveScoreColor(s) {
+  if(s<=25) return {fill:'rgba(22,163,74,.62)',  stroke:'rgba(22,163,74,.9)'};
+  if(s<=40) return {fill:'rgba(12,107,90,.62)',  stroke:'rgba(12,107,90,.9)'};
+  if(s<=55) return {fill:'rgba(217,119,6,.62)',  stroke:'rgba(217,119,6,.9)'};
+  if(s<=70) return {fill:'rgba(220,38,38,.62)',  stroke:'rgba(220,38,38,.9)'};
+  return      {fill:'rgba(127,29,29,.75)',        stroke:'rgba(185,28,28,.95)'};
+}
+
+function liveScore(name, layer) {
+  const w = WARDS.find(x => x.ward === name);
+  if(!w) return 45;
+  const j = (Math.random() - 0.5) * 1.2;
+  if(layer==='heatmap'||layer==='composite') return Math.min(100, w.crcs + j);
+  if(layer==='flood')  return Math.min(100, w.physical * 1.1 + j);
+  if(layer==='uhi')    return Math.min(100, w.physical * .85 + 8 + j);
+  if(layer==='water')  return Math.min(100, w.physical * .55 + w.financial * 1.1 + j);
+  return w.crcs;
+}
+
+function drawLiveMap() {
+  const cv = document.getElementById('liveMapCvs');
+  if(!cv) return;
+  const lx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  lx.fillStyle = '#0a1210'; lx.fillRect(0,0,W,H);
+
+  lx.strokeStyle = 'rgba(58,170,146,.05)'; lx.lineWidth = 1;
+  for(let x=0;x<W;x+=50){lx.beginPath();lx.moveTo(x,0);lx.lineTo(x,H);lx.stroke();}
+  for(let y=0;y<H;y+=50){lx.beginPath();lx.moveTo(0,y);lx.lineTo(W,y);lx.stroke();}
+
+  lx.strokeStyle='rgba(58,170,146,.18)'; lx.lineWidth=2;
+  lx.beginPath();lx.moveTo(W*.58,H*.65);lx.bezierCurveTo(W*.62,H*.72,W*.64,H*.76,W*.60,H*.80);lx.stroke();
+  lx.beginPath();lx.moveTo(W*.30,H*.62);lx.bezierCurveTo(W*.26,H*.66,W*.24,H*.70,W*.28,H*.76);lx.stroke();
+
+  // Heatmap glow layer
+  if(liveLayer === 'heatmap') {
+    MAP_NODES.forEach(nd => {
+      const sc = liveScore(nd.n, 'heatmap');
+      const wx = nd.x*W, wy = nd.y*H;
+      const radius = nd.rx*W*2.4;
+      const col = sc<=25?'22,163,74':sc<=40?'12,107,90':sc<=55?'217,119,6':sc<=70?'220,38,38':'185,28,28';
+      const grad = lx.createRadialGradient(wx,wy,0,wx,wy,radius);
+      grad.addColorStop(0, `rgba(${col},.28)`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      lx.beginPath();
+      lx.arc(wx,wy,radius,0,Math.PI*2);
+      lx.fillStyle = grad; lx.fill();
+    });
+  }
+
+  MAP_NODES.forEach(nd => {
+    const sc = liveScore(nd.n, liveLayer);
+    const col = liveScoreColor(sc);
+    const wx = nd.x*W, wy = nd.y*H, rx = nd.rx*W, ry = nd.ry*H;
+
+    lx.beginPath(); lx.ellipse(wx,wy,rx,ry,0,0,Math.PI*2);
+    lx.fillStyle = col.fill; lx.fill();
+    lx.strokeStyle = col.stroke; lx.lineWidth = 1; lx.stroke();
+
+    lx.textAlign = 'center';
+    lx.fillStyle = 'rgba(255,255,255,.65)';
+    lx.font = '400 8.5px "Geist",sans-serif';
+    lx.fillText(nd.n.length>11?nd.n.split(' ')[0]:nd.n, wx, wy-3);
+    lx.font = '500 9.5px "Geist Mono",monospace';
+    lx.fillStyle = col.stroke;
+    lx.fillText(sc.toFixed(1), wx, wy+8);
+  });
+}
+
+function drawGauge() {
+  const cv = document.getElementById('gaugeChart');
+  if(!cv) return;
+  const gx = cv.getContext('2d');
+  const cx2=26, cy2=28, r=20, pct=0.462;
+  gx.clearRect(0,0,52,52);
+  gx.beginPath(); gx.arc(cx2,cy2,r,Math.PI*.75,Math.PI*2.25);
+  gx.strokeStyle='rgba(255,255,255,.1)'; gx.lineWidth=4; gx.lineCap='round'; gx.stroke();
+  gx.beginPath(); gx.arc(cx2,cy2,r,Math.PI*.75,Math.PI*.75+pct*Math.PI*1.5);
+  gx.strokeStyle='#3aaa92'; gx.lineWidth=4; gx.stroke();
+}
+
+window.addEventListener('resize', () => {
+  if(document.getElementById('pg-monitor') && document.getElementById('pg-monitor').classList.contains('active')) resizeLiveMap();
 });
 </script>
 </body>
