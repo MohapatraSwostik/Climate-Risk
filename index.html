@@ -281,9 +281,7 @@ table.dt tbody tr:hover td{background:var(--bg)}
     <div class="sb-item" onclick="nav('ward',this)">
       <div class="sb-icon">◫</div>Ward Analytics<span class="sb-badge">Charts</span>
     </div>
-    <div class="sb-item" onclick="nav('financial',this)">
-      <div class="sb-icon">₹</div>Financial Decision Matrix
-    </div>
+
     <div class="sb-item" onclick="nav('scenario',this)">
       <div class="sb-icon">⚡</div>Scenario Engine
     </div>
@@ -391,11 +389,74 @@ table.dt tbody tr:hover td{background:var(--bg)}
       </div>
 
       <div class="divider"></div>
-      <div style="background:var(--teal-l);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:16px">
-        <div style="font-size:22px">💡</div>
+
+      <!-- Grade Legend -->
+      <div class="label" style="margin-bottom:14px">Grade legend — what each score means financially</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+
+        <div style="background:var(--green-l);border:1px solid rgba(42,104,48,.14);border-radius:10px;padding:18px">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-family:'Fraunces',serif;font-size:36px;color:var(--green);line-height:1">A</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--green);opacity:.7">0–25</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:10px">Low risk</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:11px;color:var(--green);opacity:.85">LTV up to <strong>90%</strong></div>
+            <div style="font-size:11px;color:var(--green);opacity:.85">Loan premium <strong>0 bps</strong></div>
+            <div style="font-size:11px;color:var(--green);opacity:.85">Insurance <strong>base + 5%</strong></div>
+            <div style="font-size:11px;color:var(--green);opacity:.85">🟢 Green loan eligible</div>
+          </div>
+        </div>
+
+        <div style="background:var(--teal-l);border:1px solid rgba(12,107,90,.14);border-radius:10px;padding:18px">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-family:'Fraunces',serif;font-size:36px;color:var(--teal);line-height:1">B</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--teal);opacity:.7">26–40</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:10px">Moderate risk</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:11px;color:var(--teal);opacity:.85">LTV up to <strong>85%</strong></div>
+            <div style="font-size:11px;color:var(--teal);opacity:.85">Loan premium <strong>+15 bps</strong></div>
+            <div style="font-size:11px;color:var(--teal);opacity:.85">Insurance <strong>base + 14%</strong></div>
+            <div style="font-size:11px;color:var(--teal);opacity:.85">🔵 Monitor · disclose</div>
+          </div>
+        </div>
+
+        <div style="background:var(--amber-l);border:1px solid rgba(140,94,0,.14);border-radius:10px;padding:18px">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-family:'Fraunces',serif;font-size:36px;color:var(--amber);line-height:1">C</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--amber);opacity:.7">41–55</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:10px">Elevated risk</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:11px;color:var(--amber);opacity:.85">LTV up to <strong>85%</strong></div>
+            <div style="font-size:11px;color:var(--amber);opacity:.85">Loan premium <strong>+15 bps</strong></div>
+            <div style="font-size:11px;color:var(--amber);opacity:.85">Insurance <strong>base + 14%</strong></div>
+            <div style="font-size:11px;color:var(--amber);opacity:.85">🟡 Check sub-scores</div>
+          </div>
+        </div>
+
+        <div style="background:var(--red-l);border:1px solid rgba(143,34,34,.14);border-radius:10px;padding:18px">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-family:'Fraunces',serif;font-size:36px;color:var(--red);line-height:1">D</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--red);opacity:.7">56–100</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:10px">High / severe risk</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:11px;color:var(--red);opacity:.85">LTV capped <strong>65–75%</strong></div>
+            <div style="font-size:11px;color:var(--red);opacity:.85">Loan premium <strong>+40–120 bps</strong></div>
+            <div style="font-size:11px;color:var(--red);opacity:.85">Insurance <strong>+28–42%</strong> + rider</div>
+            <div style="font-size:11px;color:var(--red);opacity:.85">🔴 High caution</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="background:var(--teal-l);border-radius:10px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:20px;flex-shrink:0">💡</div>
         <div>
-          <div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:3px">CRCS = the CIBIL score for climate risk in real estate</div>
-          <div style="font-size:13px;color:var(--teal);opacity:.8">Every rupee lent, every policy issued, every property bought in Bengaluru should reference a CRCS score. The data already exists. The infrastructure now does too.</div>
+          <div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:2px">CRCS = the CIBIL score for climate risk in real estate</div>
+          <div style="font-size:12.5px;color:var(--teal);opacity:.8">Every rupee lent, every policy issued, every property bought in Bengaluru should reference a CRCS score. The data already exists. The infrastructure now does too.</div>
         </div>
       </div>
     </div>
@@ -846,13 +907,13 @@ const scoreCol = s => s<=25?'#2a6830':s<=40?'#0c6b5a':s<=55?'#8c5e00':s<=70?'#8a
 // ── NAVIGATION ────────────────────────────────────────────────────────────
 const PAGE_LABELS = {
   overview:'Overview', map:'Bengaluru Risk Map', ward:'Ward Analytics',
-  financial:'Financial Decision Matrix', scenario:'Scenario Engine',
+  scenario:'Scenario Engine',
   method:'Methodology', pipeline:'Data Pipeline',
   validation:'Validation & Confidence', investor:'Investor / Product'
 };
 const PAGE_SECTIONS = {
   overview:'Platform', map:'Platform', ward:'Analytics',
-  financial:'Analytics', scenario:'Analytics',
+  scenario:'Analytics',
   method:'Methodology', pipeline:'Methodology',
   validation:'Methodology', investor:'Strategy'
 };
