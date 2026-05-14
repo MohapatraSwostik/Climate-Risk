@@ -315,6 +315,18 @@ canvas#liveMapCvs{display:block;width:100%;height:100%}
 .hw-body{font-size:11.5px;color:rgba(255,255,255,.4);line-height:1.55}
 
 @media(max-width:900px){.monitor-shell{grid-template-columns:1fr}.impact-row{grid-template-columns:1fr}.hw-steps{grid-template-columns:1fr 1fr}}
+/* ─── SCENARIO SLIDER STYLES ─────────────────────────────────────────── */
+.sl-block{margin-bottom:18px}.sl-block:last-child{margin-bottom:0}
+.sl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.sl-label{font-size:12.5px;font-weight:500;color:var(--ink)}
+.sl-val{font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:var(--teal);min-width:52px;text-align:right}
+.sl-sub{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3);margin-top:4px}
+.sl{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:var(--bg3);outline:none;cursor:pointer}
+.sl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;border:2px solid var(--white);box-shadow:0 1px 4px rgba(0,0,0,.18);transition:background .15s}
+.sl::-webkit-slider-thumb:hover{background:var(--teal)}
+.sl::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;border:2px solid var(--white);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.preset-btn{width:100%;padding:8px 12px;border:1px solid var(--rule);background:var(--white);border-radius:6px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink2);cursor:pointer;text-align:left;transition:all .15s}
+.preset-btn:hover{background:var(--bg2);border-color:rgba(26,25,22,.2);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -686,35 +698,169 @@ canvas#liveMapCvs{display:block;width:100%;height:100%}
     <!-- ══════════════════════════════════════════ SCENARIO ENGINE -->
     <div class="section-page" id="pg-scenario">
       <div class="page-h">Bellandur <em>Scenario Engine</em></div>
-      <p class="page-sub">Forward-looking climate scenarios for a reference property. See how ClimateIQ, financial burden, and resilience ROI shift across six conditions.</p>
+      <p class="page-sub" style="margin-bottom:16px">Drag the sliders to simulate climate stress conditions. Results update live — no scrolling needed.</p>
 
-      <div class="g2" style="margin-bottom:16px;align-items:start">
-        <div class="card">
-          <div class="label">Reference property</div>
-          <div style="font-size:16px;font-weight:500;color:var(--ink);margin:8px 0 2px">Flat 4B — Prestige Sunrise Phase II</div>
-          <div style="font-size:12px;color:var(--ink2);margin-bottom:16px">Bellandur · 3BHK · 1,680 sqft · ₹1.42 Cr</div>
-          <div class="g2 gap-sm">
-            <div style="background:var(--bg);border-radius:6px;padding:12px"><div style="font-family:'Fraunces',serif;font-size:20px;color:var(--ink)">₹1.42 Cr</div><div style="font-size:10px;color:var(--ink3);font-family:'Geist Mono',monospace;margin-top:2px">Property value</div></div>
-            <div style="background:var(--bg);border-radius:6px;padding:12px"><div style="font-family:'Fraunces',serif;font-size:20px;color:var(--ink)">₹1.07 Cr</div><div style="font-size:10px;color:var(--ink3);font-family:'Geist Mono',monospace;margin-top:2px">Loan applied</div></div>
-          </div>
+      <!-- top strip: property + base score -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="card" style="padding:16px">
+          <div class="label" style="margin-bottom:6px">Reference property</div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink)">Flat 4B — Prestige Sunrise Phase II</div>
+          <div style="font-size:11px;color:var(--ink2);margin-top:2px">Bellandur · 3BHK · 1,680 sqft · ₹1.42 Cr</div>
         </div>
-        <div class="card">
-          <div class="label">Base ClimateIQ score</div>
-          <div style="font-family:'Fraunces',serif;font-size:52px;color:var(--orange);line-height:1;margin:8px 0 4px">60.6</div>
-          <div style="font-size:13px;color:var(--ink2);margin-bottom:14px">Grade D · High risk · CI: 59.0–62.2</div>
-          <div style="border-top:1px solid var(--rule);padding-top:12px">
-            <div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3);margin-bottom:4px">10-YEAR FINANCIAL DISADVANTAGE</div>
-            <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--orange)">₹13.2 lakh</div>
-            <div style="font-size:12px;color:var(--ink2)">vs Grade A comparable property</div>
-          </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div class="label" style="margin-bottom:4px">Live ClimateIQ score</div>
+          <div style="font-family:'Fraunces',serif;font-size:48px;line-height:1;margin-bottom:2px;transition:color .3s" id="liveScore">60.6</div>
+          <div style="font-size:12px;font-family:'Geist Mono',monospace" id="liveGrade">Grade D · High risk</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div class="label" style="margin-bottom:4px">Annual financial burden</div>
+          <div style="font-family:'Fraunces',serif;font-size:36px;line-height:1;margin-bottom:2px;color:var(--orange);transition:all .3s" id="liveLoan">₹58,850</div>
+          <div style="font-size:11px;color:var(--ink2);font-family:'Geist Mono',monospace" id="liveBps">+55 bps loan premium</div>
         </div>
       </div>
 
-      <div class="sc-list" id="scList"></div>
-      <div class="sc-detail-box" id="scDetailBox">
-        <div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:16px" id="scdTitle">Select a scenario</div>
-        <div class="scd-grid" id="scdGrid"></div>
-        <div class="scd-note" id="scdNote">Click any scenario above to view details.</div>
+      <!-- MAIN LAYOUT: sliders LEFT · results RIGHT -->
+      <div style="display:grid;grid-template-columns:420px 1fr;gap:16px;align-items:start">
+
+        <!-- LEFT: sliders panel -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- slider card -->
+          <div class="card" style="padding:20px">
+            <div class="label" style="margin-bottom:16px">Climate stress conditions</div>
+
+            <!-- Rainfall slider -->
+            <div class="sl-block">
+              <div class="sl-row">
+                <span class="sl-label">🌧 Monsoon rainfall</span>
+                <span class="sl-val" id="vRain">+0%</span>
+              </div>
+              <input type="range" class="sl" id="sRain" min="-10" max="60" value="0" oninput="recalc()">
+              <div class="sl-sub">Bengaluru baseline: 900mm/yr</div>
+            </div>
+
+            <!-- UHI slider -->
+            <div class="sl-block">
+              <div class="sl-row">
+                <span class="sl-label">🌡 Urban heat island</span>
+                <span class="sl-val" id="vUHI">+0°C</span>
+              </div>
+              <input type="range" class="sl" id="sUHI" min="0" max="4" value="0" step="0.5" oninput="recalc()">
+              <div class="sl-sub">Current: +3.8°C above rural baseline</div>
+            </div>
+
+            <!-- Groundwater slider -->
+            <div class="sl-block">
+              <div class="sl-row">
+                <span class="sl-label">💧 Groundwater depletion</span>
+                <span class="sl-val" id="vGW">+0%</span>
+              </div>
+              <input type="range" class="sl" id="sGW" min="0" max="60" value="0" oninput="recalc()">
+              <div class="sl-sub">Current depth: 42m below ground (Whitefield)</div>
+            </div>
+
+            <!-- Resilience slider -->
+            <div class="sl-block">
+              <div class="sl-row">
+                <span class="sl-label">🏗 Resilience investment</span>
+                <span class="sl-val" id="vRes">₹0L</span>
+              </div>
+              <input type="range" class="sl" id="sRes" min="0" max="15" value="0" oninput="recalc()">
+              <div class="sl-sub">Flood-proofing + rainwater harvesting</div>
+            </div>
+
+            <button onclick="resetSliders()" style="width:100%;margin-top:14px;padding:9px;border:1px solid var(--rule);background:var(--bg);border-radius:7px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink2);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg)'">↺ Reset to base case</button>
+          </div>
+
+          <!-- preset scenarios -->
+          <div class="card" style="padding:16px">
+            <div class="label" style="margin-bottom:10px">Quick-load presets</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="preset-btn" onclick="loadPreset(0,0,0,0)">Base case</button>
+              <button class="preset-btn" onclick="loadPreset(20,0,0,0)">+20% monsoon rainfall</button>
+              <button class="preset-btn" onclick="loadPreset(0,2,0,0)">+2°C UHI increase</button>
+              <button class="preset-btn" onclick="loadPreset(0,0,30,0)">+30% groundwater depletion</button>
+              <button class="preset-btn" onclick="loadPreset(40,2,30,0)">Combined climate shock</button>
+              <button class="preset-btn" onclick="loadPreset(0,0,0,10)" style="border-color:rgba(12,107,90,.3);color:var(--teal)">Resilience investment (₹10L)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: live results panel -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- score breakdown bar -->
+          <div class="card" style="padding:20px">
+            <div class="label" style="margin-bottom:14px">Score breakdown — live</div>
+            <div id="scoreBreakdown"></div>
+            <!-- grade band indicator -->
+            <div style="margin-top:16px;border-top:1px solid var(--rule);padding-top:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3)">GRADE BAND</span>
+                <span id="gradePill" style="padding:3px 12px;border-radius:12px;font-family:'Geist Mono',monospace;font-size:11px;font-weight:500">Grade D</span>
+              </div>
+              <!-- grade track -->
+              <div style="position:relative;height:10px;border-radius:5px;overflow:hidden;display:flex">
+                <div style="flex:25;background:#2a6830;opacity:.7"></div>
+                <div style="flex:15;background:#0c6b5a;opacity:.7"></div>
+                <div style="flex:15;background:#8c5e00;opacity:.7"></div>
+                <div style="flex:45;background:#8f2222;opacity:.7"></div>
+              </div>
+              <div style="position:relative;height:14px">
+                <div id="scoreMarker" style="position:absolute;width:12px;height:12px;border-radius:50%;background:var(--ink);border:2px solid var(--white);top:1px;transform:translateX(-50%);transition:left .4s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 4px rgba(0,0,0,.2)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--ink3);margin-top:2px">
+                <span>A (0)</span><span>B (26)</span><span>C (41)</span><span>D (56)</span><span>(100)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- financial metrics 2×3 grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">Rate premium</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--ink);transition:all .3s" id="mBps">+55 bps</div>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">Annual loan cost</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--orange);transition:all .3s" id="mLoan">₹58,850</div>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">Insurance loading</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--red);transition:all .3s" id="mIns">+28%</div>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">Property value Δ</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--ink);transition:all .3s" id="mPV">−4.7%</div>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">LTV cap</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--teal);transition:all .3s" id="mLTV">75%</div>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div class="label" style="margin-bottom:4px">10-yr burden</div>
+              <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--orange);transition:all .3s" id="mYr10">₹5.89L</div>
+            </div>
+          </div>
+
+          <!-- recommendation box -->
+          <div class="card" style="padding:18px;border-left:3px solid var(--teal)">
+            <div class="label" style="margin-bottom:6px">Recommendation</div>
+            <div style="font-size:13px;color:var(--ink);font-weight:500;margin-bottom:6px" id="recTitle">Current state — high risk</div>
+            <div style="font-size:12.5px;color:var(--ink2);line-height:1.7" id="recNote">Flood insurance rider mandatory for any lender. Property sits in the filled Bellandur kere drainage basin. Three verified flood events 2015–2022. Recommend structural flood-proofing before purchase. 10-year net disadvantage ₹13.2L vs comparable Grade A ward.</div>
+          </div>
+
+          <!-- resilience ROI (shown only when resilience > 0) -->
+          <div class="card" id="resCard" style="padding:18px;background:var(--teal-l);border:1px solid rgba(12,107,90,.2);display:none">
+            <div class="label" style="margin-bottom:6px;color:var(--teal)">Resilience ROI</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div><div style="font-family:'Fraunces',serif;font-size:22px;color:var(--teal)" id="roiSave">₹0</div><div style="font-size:11px;color:var(--teal);opacity:.75;margin-top:2px">10-yr savings</div></div>
+              <div><div style="font-family:'Fraunces',serif;font-size:22px;color:var(--teal)" id="roiNPV">₹0</div><div style="font-size:11px;color:var(--teal);opacity:.75;margin-top:2px">NPV @ 8%</div></div>
+              <div><div style="font-family:'Fraunces',serif;font-size:22px;color:var(--teal)" id="roiYrs">—</div><div style="font-size:11px;color:var(--teal);opacity:.75;margin-top:2px">Payback period</div></div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -1403,45 +1549,7 @@ function filterW(){
 }
 
 // ── SCENARIOS ─────────────────────────────────────────────────────────────
-const SC = [
-  {t:'Base case',                   crcs:60.6,delta:0,    grade:'D',loan:'₹58,850',yr10:'₹5.89L',pv:'-4.7%',ins:'+28%',bps:'+55 bps', note:'Current state. Flood insurance rider mandatory. 10-year net disadvantage ₹13.2L vs Grade A comparable.'},
-  {t:'+20% monsoon rainfall',       crcs:66.2,delta:5.6,  grade:'D',loan:'₹72,760',yr10:'₹7.28L',pv:'-5.4%',ins:'+32%',bps:'+68 bps', note:'Higher rainfall intensity raises flood sub-score. Annual loan burden increases ₹13,910. Reassess before each monsoon season.'},
-  {t:'+2°C UHI increase',           crcs:65.2,delta:4.6,  grade:'D',loan:'₹68,480',yr10:'₹6.85L',pv:'-5.2%',ins:'+31%',bps:'+64 bps', note:'Cool roof and green shading recommended. Energy cooling costs rise. Insurance loading increases due to heat-stress exposure.'},
-  {t:'+30% groundwater depletion',  crcs:62.1,delta:1.5,  grade:'D',loan:'₹62,060',yr10:'₹6.21L',pv:'-4.9%',ins:'+29%',bps:'+58 bps', note:'Tanker dependency rises materially. Verify BWSSB pipeline coverage. Water cost burden adds to financial risk sub-score.'},
-  {t:'Combined climate shock',      crcs:72.2,delta:11.6, grade:'D',loan:'₹1.28L', yr10:'₹12.8L',pv:'-6.1%',ins:'+42%',bps:'+120 bps',note:'All three stressors simultaneously. Severe end of Grade D (72.2). Financial burden nearly doubles. Consider alternative location.'},
-  {t:'Resilience investment',       crcs:56.6,delta:-4.0, grade:'C',loan:'₹16,050',yr10:'₹1.61L',pv:'-4.2%',ins:'+14%',bps:'+15 bps', note:'₹8–12L flood-proofing + rainwater harvesting. Grade D → C. Saves ₹4.97L over 10 years. NPV positive at 8% discount rate.'},
-];
-
-function buildScenarios() {
-  document.getElementById('scList').innerHTML = SC.map((s,i) => {
-    const gc=GRADE_STYLE[s.grade]||GRADE_STYLE['C'];
-    const isNeg=s.delta<0, dc=isNeg?'d-dn':s.delta===0?'d-nu':'d-up';
-    const ds=isNeg?`−${Math.abs(s.delta).toFixed(1)}`:(s.delta===0?'±0':'+'+s.delta.toFixed(1));
-    return `<div class="sc-item${i===0?' sel':''}" onclick="selSc(${i},this)">
-      <div class="sc-delta ${dc}">${ds}</div>
-      <div class="sc-info">
-        <div class="sc-name">${s.t}</div>
-        <div class="sc-sub">ClimateIQ ${s.crcs} &nbsp;<span style="background:${gc.bg};color:${gc.txt};padding:1px 7px;border-radius:4px;font-size:10px">${s.grade}</span></div>
-      </div>
-      <div class="sc-arrow">›</div>
-    </div>`;
-  }).join('');
-}
-
-function selSc(i, el) {
-  document.querySelectorAll('.sc-item').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');
-  const s=SC[i];
-  document.getElementById('scdTitle').textContent=s.t;
-  document.getElementById('scdGrid').innerHTML=`
-    <div class="scd-m"><div class="scd-v">${s.crcs}</div><div class="scd-l">ClimateIQ score</div></div>
-    <div class="scd-m"><div class="scd-v">${s.bps}</div><div class="scd-l">Rate premium</div></div>
-    <div class="scd-m"><div class="scd-v">${s.loan}</div><div class="scd-l">Annual loan cost</div></div>
-    <div class="scd-m"><div class="scd-v">${s.ins}</div><div class="scd-l">Insurance loading</div></div>
-    <div class="scd-m"><div class="scd-v">${s.pv}</div><div class="scd-l">Property value impact</div></div>
-    <div class="scd-m"><div class="scd-v">${s.yr10}</div><div class="scd-l">10-year cost burden</div></div>`;
-  document.getElementById('scdNote').textContent=s.note;
-}
+// Scenario engine now uses slider recalc() — old SC array and buildScenarios removed
 
 // ── CONFIDENCE BARS ───────────────────────────────────────────────────────
 function buildConfBars() {
@@ -1476,9 +1584,7 @@ function buildConfBars() {
 buildTop5();
 initOverviewChart();
 filterW();
-buildScenarios();
 buildConfBars();
-selSc(0, document.querySelector('.sc-item'));
 
 window.addEventListener('resize', () => {
   if(document.getElementById('pg-map').classList.contains('active')) resizeMap();
@@ -1597,6 +1703,203 @@ function drawGauge() {
 window.addEventListener('resize', () => {
   if(document.getElementById('pg-monitor') && document.getElementById('pg-monitor').classList.contains('active')) resizeLiveMap();
 });
+
+// ── SCENARIO ENGINE: SLIDER RECALC ───────────────────────────────────────
+// Base values for Bellandur Flat 4B
+const BASE = { score:60.6, physical:69.7, exposure:65.9, financial:37.8 };
+const LOAN_AMOUNT = 10700000; // ₹1.07 Cr
+
+function scoreToGrade(s) {
+  if(s<=25) return {g:'A',label:'Low risk',      bg:'#eaf5ec',txt:'#2a6830'};
+  if(s<=40) return {g:'B',label:'Moderate risk',  bg:'#e4f2ee',txt:'#0c6b5a'};
+  if(s<=55) return {g:'C',label:'Elevated risk',  bg:'#fef3d8',txt:'#8c5e00'};
+  return            {g:'D',label:'High risk',      bg:'#fef3ec',txt:'#8a3a00'};
+}
+
+function scoreToBps(s) {
+  if(s<=25) return 0;
+  if(s<=40) return 15;
+  if(s<=55) return 15 + Math.round((s-40)/15 * 25);
+  return 55 + Math.round((s-56)/44 * 65); // 55–120 bps for Grade D
+}
+
+function scoreToIns(s) {
+  if(s<=25) return 5;
+  if(s<=40) return 14;
+  if(s<=55) return 14 + Math.round((s-40)/15 * 6);
+  return 28 + Math.round((s-56)/44 * 14); // 28–42% for Grade D
+}
+
+function scoreToLTV(s) {
+  if(s<=25) return '90%';
+  if(s<=40) return '85%';
+  if(s<=55) return '85%';
+  if(s<=70) return '75%';
+  return '65%';
+}
+
+function scoreToPV(s) {
+  const pv = 2.655 - 0.1213 * s;
+  return pv.toFixed(1) + '%';
+}
+
+function fmtLoan(bps) {
+  const annual = Math.round(LOAN_AMOUNT * (bps/10000));
+  if(annual >= 100000) return '₹' + (annual/100000).toFixed(2) + 'L';
+  return '₹' + annual.toLocaleString('en-IN');
+}
+
+function fmtYr10(bps) {
+  const yr10 = Math.round(LOAN_AMOUNT * (bps/10000) * 10);
+  return '₹' + (yr10/100000).toFixed(2) + 'L';
+}
+
+function recalc() {
+  const rain = +document.getElementById('sRain').value;
+  const uhi  = +document.getElementById('sUHI').value;
+  const gw   = +document.getElementById('sGW').value;
+  const res  = +document.getElementById('sRes').value;
+
+  // update slider display values
+  document.getElementById('vRain').textContent = (rain >= 0 ? '+' : '') + rain + '%';
+  document.getElementById('vUHI').textContent  = (uhi >= 0 ? '+' : '') + uhi + '°C';
+  document.getElementById('vGW').textContent   = (gw  >= 0 ? '+' : '') + gw  + '%';
+  document.getElementById('vRes').textContent  = '₹' + res + 'L';
+
+  // ── compute score delta ──
+  const dRain = rain * 0.041;           // +10% rainfall  → +0.41 CRCS
+  const dUHI  = uhi  * 0.68;           // +1°C UHI       → +0.68 CRCS
+  const dGW   = gw   * 0.023;          // +10% depletion → +0.23 CRCS
+  // Resilience: ₹10L → −6 pts → reaches Grade C from base 60.6 → 54.6
+  const dRes  = -(res * 0.6);          // ₹1L → −0.6 pts
+
+  const rawScore = BASE.score + dRain + dUHI + dGW + dRes;
+  const score = Math.max(10, Math.min(99, +rawScore.toFixed(1)));
+
+  const grade  = scoreToGrade(score);
+  const bps    = scoreToBps(score);
+  const ins    = scoreToIns(score);
+  const ltv    = scoreToLTV(score);
+  const pv     = scoreToPV(score);
+  const loan   = fmtLoan(bps);
+  const yr10   = fmtYr10(bps);
+
+  // ── update live score ──
+  const scoreEl = document.getElementById('liveScore');
+  scoreEl.textContent = score.toFixed(1);
+  scoreEl.style.color = grade.txt;
+
+  document.getElementById('liveGrade').textContent = `Grade ${grade.g} · ${grade.label}`;
+  document.getElementById('liveGrade').style.color = grade.txt;
+  document.getElementById('liveGrade').style.fontFamily = "'Geist Mono', monospace";
+  document.getElementById('liveGrade').style.fontSize = '11px';
+
+  document.getElementById('liveLoan').textContent = loan;
+  document.getElementById('liveBps').textContent  = '+' + bps + ' bps loan premium';
+
+  // ── grade pill ──
+  const gp = document.getElementById('gradePill');
+  gp.textContent = `Grade ${grade.g} · ${score.toFixed(1)}`;
+  gp.style.background = grade.bg;
+  gp.style.color = grade.txt;
+
+  // ── marker position on grade track ──
+  const pct = Math.min(99, Math.max(1, score)) / 100;
+  document.getElementById('scoreMarker').style.left = (pct * 100) + '%';
+  document.getElementById('scoreMarker').style.background = grade.txt;
+
+  // ── metric cells ──
+  const setM = (id, val, col) => {
+    const el = document.getElementById(id);
+    el.textContent = val;
+    if(col) el.style.color = col;
+  };
+  setM('mBps',  '+' + bps + ' bps', grade.txt);
+  setM('mLoan', loan, bps > 55 ? 'var(--red)' : 'var(--orange)');
+  setM('mIns',  '+' + ins + '%', ins > 28 ? 'var(--red)' : 'var(--orange)');
+  setM('mPV',   pv.startsWith('-') ? pv : '+' + pv, null);
+  setM('mLTV',  ltv, 'var(--teal)');
+  setM('mYr10', yr10, 'var(--orange)');
+
+  // ── score breakdown bars ──
+  const physDelta = +(dRain * 0.45 / 0.45 + dUHI * 0.45 / 0.45 + dGW * 0.45 / 0.45).toFixed(1);
+  const physScore = Math.min(100, +(BASE.physical + rain * 0.09 + uhi * 1.5 + gw * 0.05 - res * 0.9).toFixed(1));
+  const expoScore = Math.min(100, +(BASE.exposure - res * 0.4).toFixed(1));
+  const finScore  = Math.min(100, Math.max(10, +(BASE.financial + gw * 0.04 - res * 0.3).toFixed(1)));
+
+  const bars = [
+    {label:'Physical risk (45%)', val:physScore, max:100, col:'#1c4f8c'},
+    {label:'Exposure risk (30%)', val:expoScore, max:100, col:'#8c5e00'},
+    {label:'Financial risk (25%)', val:finScore,  max:100, col:'#0c6b5a'},
+  ];
+  document.getElementById('scoreBreakdown').innerHTML = bars.map(b => `
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink2)">${b.label}</span>
+        <span style="font-family:'Geist Mono',monospace;font-size:11px;font-weight:600;color:${b.col}">${b.val.toFixed(1)}</span>
+      </div>
+      <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${b.val}%;background:${b.col};border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1)"></div>
+      </div>
+    </div>`).join('');
+
+  // ── recommendation ──
+  const recMap = {
+    A: {
+      title: 'Safe zone — green loan eligible',
+      note: `Score ${score.toFixed(1)} — Grade A. Excellent climate profile. LTV 90%, no rate premium, insurance base +5%. Qualifies for green home loan products at preferential rates. Strong long-term asset value stability. This is Bengaluru's safest climate band.`
+    },
+    B: {
+      title: 'Moderate risk — monitor annually',
+      note: `Score ${score.toFixed(1)} — Grade B. Manageable risk level. LTV 85%, +15 bps loan premium, insurance +14%. Annual climate review recommended. No immediate restrictions — standard underwriting applies. No flood insurance rider required.`
+    },
+    C: {
+      title: 'Elevated risk — verify sub-scores before purchase',
+      note: `Score ${score.toFixed(1)} — Grade C. One or more risk dimensions elevated. LTV 85%, +15 bps loading, insurance +14%. Recommend verifying drainage capacity and flood history. Check if CI band is borderline with Grade D — manual underwriter review advised.`
+    },
+    D: {
+      title: 'High risk — flood insurance rider mandatory',
+      note: `Score ${score.toFixed(1)} — Grade D. LTV capped at ${ltv}. Flood insurance rider required by lender. ${ins}% insurance loading. Annual loan burden ${loan}. 10-year financial impact ${yr10}. Resilience investment of ₹8–12L (flood-proofing + RWH) can reduce score to Grade C and save ₹4.97L over 10 years.`
+    }
+  };
+  const rec = recMap[grade.g] || recMap['D'];
+  document.getElementById('recTitle').textContent = rec.title;
+  document.getElementById('recNote').textContent  = rec.note;
+  document.getElementById('recTitle').style.color = grade.txt;
+
+  // ── resilience ROI ──
+  if(res > 0) {
+    document.getElementById('resCard').style.display = 'block';
+    const baseLoanAnnual = Math.round(LOAN_AMOUNT * (scoreToBps(BASE.score)/10000));
+    const newLoanAnnual  = Math.round(LOAN_AMOUNT * (bps/10000));
+    const annualSaving   = baseLoanAnnual - newLoanAnnual;
+    const yr10saving     = annualSaving * 10;
+    const invest         = res * 100000;
+    const npv            = yr10saving - invest;
+    const payback        = invest > 0 && annualSaving > 0 ? (invest / annualSaving).toFixed(1) : '—';
+    document.getElementById('roiSave').textContent = '₹' + (yr10saving/100000).toFixed(2) + 'L';
+    document.getElementById('roiNPV').textContent  = npv >= 0 ? '+₹' + (npv/100000).toFixed(2) + 'L' : '−₹' + (Math.abs(npv)/100000).toFixed(2) + 'L';
+    document.getElementById('roiYrs').textContent  = payback + ' yrs';
+  } else {
+    document.getElementById('resCard').style.display = 'none';
+  }
+}
+
+function resetSliders() {
+  ['sRain','sUHI','sGW','sRes'].forEach(id => document.getElementById(id).value = 0);
+  recalc();
+}
+
+function loadPreset(rain, uhi, gw, res) {
+  document.getElementById('sRain').value = rain;
+  document.getElementById('sUHI').value  = uhi;
+  document.getElementById('sGW').value   = gw;
+  document.getElementById('sRes').value  = res;
+  recalc();
+}
+
+// init on load
+recalc();
 </script>
 </body>
 </html>
